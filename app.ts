@@ -1,6 +1,6 @@
 import * as ExcelWriter from 'xlsx';
-import * as englishTranslations from './translations/en.json';
-import * as italianTranslations from './translations/it.json';
+import { JsonParser } from './parser/json.parser';
+import * as path from 'path';
 
 export interface TranslationMetaFormat {
   // the actual translation key
@@ -10,23 +10,10 @@ export interface TranslationMetaFormat {
   [languageKey: string]: string;
 }
 
-const allAvailableKeys: string[] = [];
+const jsonParser = new JsonParser();
 
-Object.keys(englishTranslations).concat(Object.keys(italianTranslations)).forEach((key: string) => {
-  if (allAvailableKeys.indexOf(key) === -1) {
-    allAvailableKeys.push(key);
-  }
-});
-
-allAvailableKeys.sort();
-
-const translationObjects: TranslationMetaFormat[] = allAvailableKeys.map((key: string) => {
-  return {
-    key,
-    en: (englishTranslations as any)[key] ? (englishTranslations as any)[key] : '',
-    it: (italianTranslations as any)[key] ? (italianTranslations as any)[key] : ''
-  };
-});
+const translationObjects: TranslationMetaFormat[] =
+  jsonParser.parseFilesFromDirectory(path.join(__dirname, 'translations'));
 
 const ws = ExcelWriter.utils.json_to_sheet(translationObjects, { header: ['key', 'en', 'it'] });
 

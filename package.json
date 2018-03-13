@@ -16,6 +16,7 @@
     "xlsx": "^0.12.2"
   },
   "devDependencies": {
+    "@types/node": "^9.4.7",
     "tslint": "^5.9.1",
     "typescript": "^2.7.2"
   }

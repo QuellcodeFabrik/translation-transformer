@@ -14,10 +14,10 @@ export interface Composer {
    * Transforms the given input data into the output files as defined for the
    * specific composer implementation. Returns the number of files created.
    *
-   * @param {TranslationMetaFormat} input
+   * @param {TranslationMetaFormat[]} input
    * @param {string} absoluteTargetLocation
    * @returns {number}
    */
   createTranslationFiles(
-    input: TranslationMetaFormat, absoluteTargetLocation: string): number;
+    input: TranslationMetaFormat[], absoluteTargetLocation: string): number;
 }

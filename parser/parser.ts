@@ -2,23 +2,19 @@ import { TranslationMetaFormat } from '../app';
 
 export interface Parser {
   /**
-   * Parses all files that are located at the given absolute location. Will
-   * also check for files in sub folders if the recursive parameter is set to
-   * true.
+   * Parses all files that are located at the given absolute location.
    *
    * @param {string} absolutePath
-   * @param {boolean} recursive
-   * @returns {Promise<TranslationMetaFormat>}
+   * @returns {TranslationMetaFormat[]}
    */
-  parseFilesFromDirectory(
-    absolutePath: string, recursive: boolean): Promise<TranslationMetaFormat>;
+  parseFilesFromDirectory(absolutePath: string): TranslationMetaFormat[];
 
   /**
    * Parses all files by their absolute file paths given in the
    * absoluteFilePaths array.
    *
    * @param {Array<string>} absoluteFilePaths
-   * @returns {Promise<TranslationMetaFormat>}
+   * @returns {TranslationMetaFormat}
    */
-  parseFiles(absoluteFilePaths: string[]): Promise<TranslationMetaFormat>;
+  parseFiles(absoluteFilePaths: string[]): TranslationMetaFormat[];
 }
