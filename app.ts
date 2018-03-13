@@ -72,6 +72,3 @@ export function createJsonTranslationFilesFromExcel(excelFileAbsoluteLocation: s
       JSON.stringify(result, null, 2));
   });
 }
-
-createExcelFromJsonTranslationFiles(path.join(__dirname, 'translations'));
-createJsonTranslationFilesFromExcel(path.join(__dirname, 'output', 'translations.xlsx'));

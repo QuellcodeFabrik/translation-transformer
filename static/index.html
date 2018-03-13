@@ -5,6 +5,12 @@
     <title>Translation Service</title>
 </head>
 <body>
-    TEST
+<form enctype="multipart/form-data"
+      method="post"
+      action="/api/transform-excel">
+    <input type="text" name="test-value" value="test" />
+    <input type="file" name="translations" />
+    <input type="submit" value="Upload File" name="submit">
+</form>
 </body>
 </html>
