@@ -1,7 +1,7 @@
-import { Parser } from './parser';
-import { TranslationMetaFormat } from '../app';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Parser } from './parser';
+import { TranslationMetaFormat } from '../app';
 
 /**
  * A file parser that gets translations from JSON translation files and puts
@@ -13,13 +13,21 @@ export class JsonParser implements Parser {
 
     if (fs.existsSync(absolutePath)) {
       fs.readdirSync(absolutePath).forEach((fileName: string) => {
-        jsonFileList.push(path.join(absolutePath, fileName));
+        if (fileName.substr(-5) === '.json') {
+          jsonFileList.push(path.join(absolutePath, fileName));
+        }
       });
     } else {
       console.error('Could not find absolute path:', absolutePath);
     }
 
-    return this.parseFiles(jsonFileList);
+    if (jsonFileList.length === 0) {
+      console.warn('No JSON translation files could be found.');
+      return [];
+    } else {
+      console.log(`Found ${jsonFileList.length} JSON files.`);
+      return this.parseFiles(jsonFileList);
+    }
   }
 
   public parseFiles(absoluteFilePaths: string[]): TranslationMetaFormat[] {

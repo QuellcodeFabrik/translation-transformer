@@ -1,6 +1,7 @@
-import * as ExcelWriter from 'xlsx';
-import { JsonParser } from './parser/json.parser';
+import * as ExcelWorker from 'xlsx';
 import * as path from 'path';
+import * as fs from 'fs';
+import { JsonParser } from './parser/json.parser';
 
 export interface TranslationMetaFormat {
   // the actual translation key
@@ -10,15 +11,67 @@ export interface TranslationMetaFormat {
   [languageKey: string]: string;
 }
 
-const jsonParser = new JsonParser();
+/**
+ * Parses the JSON translation files in the given directory and creates an
+ * Excel workbook out of it.
+ *
+ * @param {string} absolutePathToDirectory
+ */
+export function createExcelFromJsonTranslationFiles(absolutePathToDirectory: string) {
+    const jsonParser = new JsonParser();
 
-const translationObjects: TranslationMetaFormat[] =
-  jsonParser.parseFilesFromDirectory(path.join(__dirname, 'translations'));
+    const translationObjects: TranslationMetaFormat[] =
+        jsonParser.parseFilesFromDirectory(absolutePathToDirectory);
 
-const ws = ExcelWriter.utils.json_to_sheet(translationObjects, { header: ['key', 'en', 'it'] });
+    const ws = ExcelWorker.utils.json_to_sheet(translationObjects, {
+        header: ['key', 'en', 'it']
+    });
 
-const wb = { SheetNames: ['DCP_Translations'], Sheets: {
-  DCP_Translations: ws
-}};
+    const wb = { SheetNames: ['DCP_Translations'], Sheets: {
+            DCP_Translations: ws
+        }};
 
-ExcelWriter.writeFile(wb, 'out.xlsx');
+    ExcelWorker.writeFile(wb, 'output/translations.xlsx');
+}
+
+/**
+ * Creates the JSON translation files from the given Excel file.
+ *
+ * @param {string} excelFileAbsoluteLocation
+ */
+export function createJsonTranslationFilesFromExcel(excelFileAbsoluteLocation: string) {
+  if (!fs.existsSync(excelFileAbsoluteLocation)) {
+    console.warn('Excel file does not exist.');
+    return;
+  }
+
+  const wb = ExcelWorker.readFile(excelFileAbsoluteLocation);
+  const ws = wb.Sheets[wb.SheetNames[0]];
+
+  // TODO validate worksheet format
+
+  const translationObjects: TranslationMetaFormat[] =
+      ExcelWorker.utils.sheet_to_json(ws, {});
+
+  if (!translationObjects || translationObjects.length === 0) {
+    console.warn('No translation data found in Excel sheet.');
+    return;
+  }
+
+  const availableLanguageKeys: string[] = Object.keys(translationObjects[0]).slice(1);
+  console.log('Available languages:', availableLanguageKeys);
+
+  availableLanguageKeys.forEach((languageKey: string) => {
+    const result: any = {};
+
+    translationObjects.forEach((translationObject: TranslationMetaFormat) => {
+       result[translationObject.key] = translationObject[languageKey] || '';
+    });
+
+    fs.writeFileSync(path.join(__dirname, 'output/' + languageKey + '.json'),
+      JSON.stringify(result, null, 2));
+  });
+}
+
+createExcelFromJsonTranslationFiles(path.join(__dirname, 'translations'));
+createJsonTranslationFilesFromExcel(path.join(__dirname, 'output', 'translations.xlsx'));
