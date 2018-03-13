@@ -1,6 +1,5 @@
 node_modules/
-output/
-uploads/
+temp/
 .idea/
 *.js
 *.js.map

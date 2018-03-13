@@ -6,19 +6,14 @@ import * as shortid from 'shortid';
 import * as app from './app';
 import { Request, Response, NextFunction } from 'express-serve-static-core';
 
-if (!fs.existsSync('uploads')) {
-  console.log('Creating uploads directory.');
-  fs.mkdirSync('uploads');
-}
-
-if (!fs.existsSync('output')) {
-  console.log('Creating output directory.');
-  fs.mkdirSync('output');
+if (!fs.existsSync('temp')) {
+  console.log('Creating temp directory.');
+  fs.mkdirSync('temp');
 }
 
 const storage = multer.diskStorage({
   destination: (req: any, file, callback) => {
-    let destinationPath = './uploads';
+    let destinationPath = './temp';
     if (req.userToken) {
       destinationPath += '/' + req.userToken;
     }
@@ -64,7 +59,7 @@ server.get('/api/test', (req: Request, res: Response) => {
   res.status(200).send('Alright!');
 });
 
-server.post('/api/transform-excel', (req: Request & any, res: Response, next: NextFunction) => {
+server.post('/api/transform-excel', (req: Request & any, res: Response) => {
   const upload = multer({
     storage,
     fileFilter: (request, file, callback: any) => {
@@ -78,28 +73,52 @@ server.post('/api/transform-excel', (req: Request & any, res: Response, next: Ne
   req.userToken = uniqueId;
 
   upload(req, res, (err: Error) => {
+    // req.body['test-value'] is now available
+
     if (err) {
       console.error('Something went wrong with Excel file upload:', err);
       return res.end(err);
     }
 
-    // req.body['test-value'] is now available
+    const targetDirectory = path.join(__dirname, 'temp', uniqueId);
 
     // start transformation process
-    app.createJsonTranslationFilesFromExcel(path.join(__dirname, 'uploads', uniqueId, 'translations.xlsx'));
+    app.createJsonTranslationFilesFromExcel(targetDirectory, 'translations.xlsx');
 
-    // delete uniqueId folder
-    fs.unlinkSync(path.join(__dirname, 'uploads', uniqueId, 'translations.xlsx'));
-    fs.rmdirSync(path.join(__dirname, 'uploads', uniqueId));
+    // The zip library needs to be instantiated:
+    const zipFileLibrary = require('node-zip');
+    const zip = new zipFileLibrary();
 
-    res.end('File has been transformed.');
+    // You can add multiple files by performing subsequent calls to zip.file();
+    // the first argument is how you want the file to be named inside your zip,
+    // the second is the actual data:
+    fs.readdirSync(targetDirectory).forEach((fileName: string) => {
+      if (fileName.substr(-5) === '.json') {
+        zip.file(fileName, fs.readFileSync(path.join(targetDirectory, fileName)));
+      }
+    });
+
+    const data = zip.generate({ base64: false, compression: 'DEFLATE' });
+
+    // it's important to use *binary* encode
+    fs.writeFileSync(path.join(targetDirectory, 'translations.zip'), data, 'binary');
+
+    res.download(path.join(targetDirectory, 'translations.zip'), 'translations.zip', (downloadError: Error) => {
+      if (downloadError) {
+        console.error('Could not send translations.zip to client:', downloadError);
+      }
+
+      // delete uniqueId folder and all content
+      fs.readdirSync(targetDirectory).forEach((fileName: string) => {
+        fs.unlinkSync(path.join(targetDirectory, fileName));
+      });
+
+      fs.rmdirSync(targetDirectory);
+    });
   });
 });
 
-server.post('/api/transform-json-translations', (req: Request, res: Response, next: NextFunction) => {
-    // req.files is array of `translations` files
-    // req.body will contain the text fields, if there were any
-});
+// server.post('/api/transform-json-translations', (req: Request, res: Response) => { });
 
 // start listening on port 8000
 console.log('Translation Service listening on port 8000.');

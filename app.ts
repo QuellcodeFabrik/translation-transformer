@@ -15,13 +15,13 @@ export interface TranslationMetaFormat {
  * Parses the JSON translation files in the given directory and creates an
  * Excel workbook out of it.
  *
- * @param {string} absolutePathToDirectory
+ * @param {string} targetDirectory
  */
-export function createExcelFromJsonTranslationFiles(absolutePathToDirectory: string) {
+export function createExcelFromJsonTranslationFiles(targetDirectory: string) {
     const jsonParser = new JsonParser();
 
     const translationObjects: TranslationMetaFormat[] =
-        jsonParser.parseFilesFromDirectory(absolutePathToDirectory);
+        jsonParser.parseFilesFromDirectory(targetDirectory);
 
     const ws = ExcelWorker.utils.json_to_sheet(translationObjects, {
         header: ['key', 'en', 'it']
@@ -31,21 +31,24 @@ export function createExcelFromJsonTranslationFiles(absolutePathToDirectory: str
             DCP_Translations: ws
         }};
 
-    ExcelWorker.writeFile(wb, 'output/translations.xlsx');
+    ExcelWorker.writeFile(wb, path.join(targetDirectory, 'translations.xlsx'));
 }
 
 /**
  * Creates the JSON translation files from the given Excel file.
  *
- * @param {string} excelFileAbsoluteLocation
+ * @param {string} targetDirectory absolute path to the output directory
+ * @param {string} excelFileName
  */
-export function createJsonTranslationFilesFromExcel(excelFileAbsoluteLocation: string) {
-  if (!fs.existsSync(excelFileAbsoluteLocation)) {
+export function createJsonTranslationFilesFromExcel(targetDirectory: string, excelFileName: string) {
+  const excelFilePath = path.join(targetDirectory, excelFileName);
+
+  if (!fs.existsSync(excelFilePath)) {
     console.warn('Excel file does not exist.');
     return;
   }
 
-  const wb = ExcelWorker.readFile(excelFileAbsoluteLocation);
+  const wb = ExcelWorker.readFile(excelFilePath);
   const ws = wb.Sheets[wb.SheetNames[0]];
 
   // TODO validate worksheet format
@@ -68,7 +71,7 @@ export function createJsonTranslationFilesFromExcel(excelFileAbsoluteLocation: s
        result[translationObject.key] = translationObject[languageKey] || '';
     });
 
-    fs.writeFileSync(path.join(__dirname, 'output/' + languageKey + '.json'),
+    fs.writeFileSync(path.join(targetDirectory, languageKey + '.json'),
       JSON.stringify(result, null, 2));
   });
 }
