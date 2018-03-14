@@ -3,14 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <title>Translation Service</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-grid.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
-<form enctype="multipart/form-data"
-      method="post"
-      action="/api/transform-excel">
-    <input type="text" name="test-value" value="test" />
-    <input type="file" name="translations" />
-    <input type="submit" value="Upload File" name="submit">
-</form>
+    <div class="container">
+        <h1>Translation File Transformer</h1>
+        <p>
+            Select the type of file you want to extract the translations
+            from and follow the instructions.
+        </p>
+
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a id="nav-link-angular" class="nav-link active">Angular Translation Files</a>
+            </li>
+            <li class="nav-item">
+                <a id="nav-link-configuration" class="nav-link">Form Configuration Files</a>
+            </li>
+            <li class="nav-item">
+                <a id="nav-link-property" class="nav-link">Java Property Files</a>
+            </li>
+        </ul>
+
+        <div id="angular-files" class="tab-view">
+            <div id="accordion">
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                        <h5 class="mb-0">
+                            <button class="btn" data-toggle="collapse" data-target="#angularTranslationExcel" aria-expanded="true" aria-controls="collapseOne">
+                                Transform Excel Translation File to JSON
+                            </button>
+                        </h5>
+                    </div>
+
+                    <div id="angularTranslationExcel" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                        <div class="card-body">
+                            <form enctype="multipart/form-data"
+                                  method="post"
+                                  action="/api/transform-excel">
+                                <input type="hidden" name="test-value" value="test" />
+                                <input type="file" name="translations" />
+                                <input type="submit" value="Upload File" name="submit">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="headingTwo">
+                        <h5 class="mb-0">
+                            <button class="btn collapsed" data-toggle="collapse" data-target="#angularTranslationJson" aria-expanded="false" aria-controls="collapseTwo">
+                                Transform JSON Translation Files to Excel
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="angularTranslationJson" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                        <div class="card-body">
+                            Not yet available.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="configuration-files" class="tab-view hidden">
+            <p>Form configuration files are not yet supported.</p>
+        </div>
+
+        <div id="property-files" class="tab-view hidden">
+            <p>Java Property files are not yet supported.</p>
+        </div>
+    </div>
+
+    <script type="application/javascript" src="js/jquery.min.js"></script>
+    <script type="application/javascript" src="js/bootstrap.min.js"></script>
+    <script type="application/javascript" src="js/script.js"></script>
 </body>
 </html>
