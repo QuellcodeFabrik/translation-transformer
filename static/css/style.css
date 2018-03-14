@@ -1,7 +1,7 @@
 body {}
 
 p {
-    margin-bottom: 2em;
+    margin-bottom: 2.5em;
 }
 
 .btn {
@@ -11,6 +11,10 @@ p {
 .btn:focus {
     outline: none;
     box-shadow: none;
+}
+
+.dcp-heading {
+    margin: 0.5em 0 0.3em 0;
 }
 
 .nav-link {
