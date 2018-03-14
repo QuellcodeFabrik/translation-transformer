@@ -24,8 +24,12 @@ const storage = multer.diskStorage({
 
     callback(null, destinationPath);
   },
-  filename: (req, file, callback) => {
-    callback(null, file.fieldname + path.extname(file.originalname));
+  filename: (req: any, file, callback) => {
+    if (req.useOriginalFileName) {
+      callback(null, file.originalname);
+    } else {
+      callback(null, file.fieldname + path.extname(file.originalname));
+    }
   }
 });
 
@@ -118,7 +122,45 @@ server.post('/api/transform-excel', (req: Request & any, res: Response) => {
   });
 });
 
-// server.post('/api/transform-json-translations', (req: Request, res: Response) => { });
+server.post('/api/transform-json-files', (req: Request & any, res: Response) => {
+  const upload = multer({
+    storage,
+    fileFilter: (request, file, callback: any) => {
+      if (path.extname(file.originalname) !== '.json') {
+        return callback('Only .json files are allowed.', null);
+      }
+      callback(null, true);
+    }}).array('translations', 20);
+
+  const uniqueId = shortid.generate();
+  req.userToken = uniqueId;
+  req.useOriginalFileName = true;
+
+  upload(req, res, (err: Error) => {
+    if (err) {
+      console.error('Something went wrong with JSON files upload:', err);
+      return res.end(err);
+    }
+
+    const targetDirectory = path.join(__dirname, 'temp', uniqueId);
+
+    // start transformation process
+    app.createExcelFromJsonTranslationFiles(targetDirectory);
+
+    res.download(path.join(targetDirectory, 'translations.xlsx'), 'translations.xlsx', (downloadError: Error) => {
+      if (downloadError) {
+        console.error('Could not send translations.xlsx to client:', downloadError);
+      }
+
+      // delete uniqueId folder and all content
+      fs.readdirSync(targetDirectory).forEach((fileName: string) => {
+        fs.unlinkSync(path.join(targetDirectory, fileName));
+      });
+
+      fs.rmdirSync(targetDirectory);
+    });
+  });
+});
 
 // start listening on port 8000
 console.log('Translation Service listening on port 8000.');

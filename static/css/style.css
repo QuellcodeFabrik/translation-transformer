@@ -13,6 +13,14 @@ p {
     box-shadow: none;
 }
 
+.nav-link {
+    cursor: pointer;
+}
+
+.nav-link.active {
+    cursor: default;
+}
+
 .tab-view {
     padding: 1em 0.5em;
 }

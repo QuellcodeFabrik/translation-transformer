@@ -45,7 +45,7 @@
                                   action="/api/transform-excel">
                                 <input type="hidden" name="test-value" value="test" />
                                 <input type="file" name="translations" />
-                                <input type="submit" value="Upload File" name="submit">
+                                <input type="submit" value="Create JSON translation files" name="submit">
                             </form>
                         </div>
                     </div>
@@ -60,7 +60,12 @@
                     </div>
                     <div id="angularTranslationJson" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
                         <div class="card-body">
-                            Not yet available.
+                            <form enctype="multipart/form-data"
+                                  method="post"
+                                  action="/api/transform-json-files">
+                                <input type="file" name="translations" multiple />
+                                <input type="submit" value="Create Excel translation file" name="submit">
+                            </form>
                         </div>
                     </div>
                 </div>
