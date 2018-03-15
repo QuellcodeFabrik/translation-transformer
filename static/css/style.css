@@ -32,3 +32,13 @@ p {
 .tab-view.hidden {
     display: none;
 }
+
+#language-selection {
+    visibility: hidden;
+    height: 0;
+}
+
+#language-selection.show {
+    visibility: visible;
+    height: auto;
+}

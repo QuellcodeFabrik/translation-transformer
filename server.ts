@@ -58,11 +58,13 @@ server.use((err: any, req: Request, res: Response, next: NextFunction) => {
 // serve static files from static folder
 server.use(express.static('static'));
 
-// REST API routes
+// REST test endpoint to check if API is set into place.
 server.get('/api/test', (req: Request, res: Response) => {
   res.status(200).send('Alright!');
 });
 
+// REST endpoint to transform an Excel file to different JSON files each of
+// them containing translations for one language key.
 server.post('/api/transform-excel', (req: Request & any, res: Response) => {
   const upload = multer({
     storage,
@@ -122,6 +124,8 @@ server.post('/api/transform-excel', (req: Request & any, res: Response) => {
   });
 });
 
+// REST endpoint to transform multiple JSON files into one Excel file
+// containing all keys and available translations
 server.post('/api/transform-json-files', (req: Request & any, res: Response) => {
   const upload = multer({
     storage,
@@ -137,6 +141,9 @@ server.post('/api/transform-json-files', (req: Request & any, res: Response) => 
   req.useOriginalFileName = true;
 
   upload(req, res, (err: Error) => {
+    const baseLanguage = req.body['base-language'];
+    console.log('Base language:', baseLanguage);
+
     if (err) {
       console.error('Something went wrong with JSON files upload:', err);
       return res.end(err);
@@ -145,7 +152,7 @@ server.post('/api/transform-json-files', (req: Request & any, res: Response) => 
     const targetDirectory = path.join(__dirname, 'temp', uniqueId);
 
     // start transformation process
-    app.createExcelFromJsonTranslationFiles(targetDirectory);
+    app.createExcelFromJsonTranslationFiles(targetDirectory, baseLanguage);
 
     res.download(path.join(targetDirectory, 'translations.xlsx'), 'translations.xlsx', (downloadError: Error) => {
       if (downloadError) {

@@ -16,22 +16,32 @@ export interface TranslationMetaFormat {
  * Excel workbook out of it.
  *
  * @param {string} targetDirectory
+ * @param {string} baseLanguage
  */
-export function createExcelFromJsonTranslationFiles(targetDirectory: string) {
-    const jsonParser = new JsonParser();
+export function createExcelFromJsonTranslationFiles(targetDirectory: string, baseLanguage: string) {
+  const jsonParser = new JsonParser();
 
-    const translationObjects: TranslationMetaFormat[] =
-        jsonParser.parseFilesFromDirectory(targetDirectory);
+  const translationObjects: TranslationMetaFormat[] =
+      jsonParser.parseFilesFromDirectory(targetDirectory);
 
-    const ws = ExcelWorker.utils.json_to_sheet(translationObjects, {
-        header: ['key', 'en', 'it']
-    });
+  const excelHeader = ['key', baseLanguage];
 
-    const wb = { SheetNames: ['DCP_Translations'], Sheets: {
-            DCP_Translations: ws
-        }};
+  // rearrange header to have the base language at the second position
+  Object.keys(translationObjects[0]).forEach((languageKey: string) => {
+    if (excelHeader.indexOf(languageKey) === -1) {
+      excelHeader.push(languageKey);
+    }
+  });
 
-    ExcelWorker.writeFile(wb, path.join(targetDirectory, 'translations.xlsx'));
+  const ws = ExcelWorker.utils.json_to_sheet(translationObjects, {
+      header: excelHeader
+  });
+
+  const wb = { SheetNames: ['DCP_Translations'], Sheets: {
+          DCP_Translations: ws
+      }};
+
+  ExcelWorker.writeFile(wb, path.join(targetDirectory, 'translations.xlsx'));
 }
 
 /**

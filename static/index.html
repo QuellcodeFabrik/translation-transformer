@@ -63,7 +63,13 @@
                             <form enctype="multipart/form-data"
                                   method="post"
                                   action="/api/transform-json-files">
-                                <input type="file" name="translations" multiple />
+                                <div id="language-selection">
+                                    <label for="language-selection-dropdown">Select your base language:</label>
+                                    <select id="language-selection-dropdown"
+                                            name="base-language">
+                                    </select>
+                                </div>
+                                <input type="file" id="excel-file-input" name="translations" multiple />
                                 <input type="submit" value="Create Excel translation file" name="submit">
                             </form>
                         </div>
