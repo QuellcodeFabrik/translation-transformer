@@ -103,6 +103,9 @@ function triggerFileUpload(formId, errorLabelId, downloadFileName, apiUrl) {
         if (request.readyState === 4) {
             if (request.status === 200) {
                 saveByteArray(downloadFileName, new Uint8Array(request.response), request.getResponseHeader('content-type'));
+                // remove files from input
+                var inputElement = $('#' + formId).find('input[type=file]')[0];
+                $(inputElement).val('');
             } else if (request.responseText !== '') {
                 var errorSpan = $('#' + errorLabelId);
                 errorSpan.text(request.responseText);

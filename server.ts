@@ -70,7 +70,7 @@ server.post('/api/transform-excel-to-json-files', (req: Request & any, res: Resp
     storage,
     fileFilter: (request, file, callback: any) => {
       if (path.extname(file.originalname) !== '.xlsx') {
-        return callback('Only .xlsx files are allowed.', null);
+        return callback(Error('Only .xlsx files are allowed.'), null);
       }
       callback(null, true);
     }}).single('translations');
@@ -79,17 +79,18 @@ server.post('/api/transform-excel-to-json-files', (req: Request & any, res: Resp
   req.userToken = uniqueId;
 
   upload(req, res, (err: Error) => {
-    // req.body['test-value'] is now available
-
     if (err) {
-      console.error('Something went wrong with Excel file upload:', err);
-      return res.end(err);
+      console.error('Something went wrong with Excel file upload:', err.message);
+      return res.status(500).send(err.message);
     }
 
     const targetDirectory = path.join(__dirname, 'temp', uniqueId);
 
-    // start transformation process
-    app.createJsonTranslationFilesFromExcel(targetDirectory, 'translations.xlsx');
+    try {
+      app.createJsonTranslationFilesFromExcel(targetDirectory, 'translations.xlsx');
+    } catch(ex) {
+      return res.status(500).send(ex.message);
+    }
 
     // The zip library needs to be instantiated:
     const zipFileLibrary = require('node-zip');
@@ -131,7 +132,7 @@ server.post('/api/transform-json-files', (req: Request & any, res: Response) => 
     storage,
     fileFilter: (request, file, callback: any) => {
       if (path.extname(file.originalname) !== '.json') {
-        return callback('Only .json files are allowed.', null);
+        return callback(Error('Only .json files are allowed.'), null);
       }
       callback(null, true);
     }}).array('translations', 20);
@@ -141,18 +142,21 @@ server.post('/api/transform-json-files', (req: Request & any, res: Response) => 
   req.useOriginalFileName = true;
 
   upload(req, res, (err: Error) => {
+    if (err) {
+      console.error('Something went wrong with JSON files upload:', err.message);
+      return res.status(500).send(err.message);
+    }
+
     const baseLanguage = req.body['base-language'];
     console.log('Base language:', baseLanguage);
 
-    if (err) {
-      console.error('Something went wrong with JSON files upload:', err);
-      return res.end(err);
-    }
-
     const targetDirectory = path.join(__dirname, 'temp', uniqueId);
 
-    // start transformation process
-    app.createExcelFromJsonTranslationFiles(targetDirectory, baseLanguage);
+    try {
+      app.createExcelFromJsonTranslationFiles(targetDirectory, baseLanguage);
+    } catch(ex) {
+      return res.status(500).send(ex.message);
+    }
 
     res.download(path.join(targetDirectory, 'translations.xlsx'), 'translations.xlsx', (downloadError: Error) => {
       if (downloadError) {

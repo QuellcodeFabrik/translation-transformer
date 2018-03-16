@@ -61,7 +61,10 @@ export function createJsonTranslationFilesFromExcel(targetDirectory: string, exc
   const wb = ExcelWorker.readFile(excelFilePath);
   const ws = wb.Sheets[wb.SheetNames[0]];
 
-  // TODO validate worksheet format
+  if (!ws.A1 || ws.A1.v !== 'key') {
+    console.warn('Worksheet format is not correct.');
+    throw Error('Worksheet format is not correct. Key column is missing.');
+  }
 
   const translationObjects: TranslationMetaFormat[] =
       ExcelWorker.utils.sheet_to_json(ws, {});
