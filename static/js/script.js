@@ -71,7 +71,7 @@ $('#excel-to-form-configuration-submit-button').on('click', function() {
         'form-configuration-excel-form',
         'form-configuration-excel-error',
         'translations.zip',
-        '/api/transform-excel-to-form-configuration'
+        '/api/transform-excel-to-form-configurations'
     );
 });
 
@@ -80,7 +80,7 @@ $('#form-configuration-to-excel-submit-button').on('click', function() {
         'form-configuration-json-form',
         'form-configuration-json-error',
         'translations.xlsx',
-        '/api/transform-form-configuration-to-excel'
+        '/api/transform-form-configurations-to-excel'
     );
 });
 

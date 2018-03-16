@@ -135,7 +135,7 @@ server.post('/api/transform-json-files-to-excel', (req: Request & any, res: Resp
         return callback(Error('Only .json files are allowed.'), null);
       }
       callback(null, true);
-    }}).array('translations', 20);
+    }}).array('json-translations', 20);
 
   const uniqueId = shortid.generate();
   req.userToken = uniqueId;
@@ -175,14 +175,15 @@ server.post('/api/transform-json-files-to-excel', (req: Request & any, res: Resp
 
 // REST endpoint to transform an Excel file to different form configuration
 // files each of them containing translations for one language key.
-server.post('/api/transform-excel-to-form-configuration', (req: Request & any, res: Response) => {
+server.post('/api/transform-excel-to-form-configurations', (req: Request & any, res: Response) => {
+  // TODO check if Excel file and at least one form configuration is given
   res.status(404).send('Not yet implemented.');
 });
 
 // REST endpoint to transform a form configuration into an Excel file
 // containing all keys and available translations
-server.post('/api/transform-form-configuration-to-excel', (req: Request & any, res: Response) => {
-  res.status(404).send('Not yet implemented.');
+server.post('/api/transform-form-configurations-to-excel', (req: Request & any, res: Response) => {
+  res.status(500).send('Not yet implemented.');
 });
 
 server.get('*', (req: Request & any, res: Response) => {

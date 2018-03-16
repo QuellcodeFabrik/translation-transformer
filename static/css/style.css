@@ -1,7 +1,11 @@
 body {}
 
 p {
-    margin-bottom: 2.5em;
+    margin-bottom: 1.5em;
+}
+
+tr td:first-of-type {
+    padding-right: 1em;
 }
 
 .btn {
@@ -15,6 +19,10 @@ p {
 
 .dcp-heading {
     margin: 0.5em 0 0.3em 0;
+}
+
+.dcp-intro {
+    margin-bottom: 2.5em;
 }
 
 .nav-link {
@@ -50,4 +58,9 @@ p {
     color: red;
     display: none;
     padding-top: 0.5em;
+}
+
+#excel-to-form-configuration-submit-button {
+    display: block;
+    margin-top: 0.8em;
 }

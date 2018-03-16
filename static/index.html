@@ -10,7 +10,7 @@
 <body>
     <div class="container">
         <h1 class="dcp-heading">Translation File Transformer</h1>
-        <p>
+        <p class="dcp-intro">
             Select the type of file you want to extract the translations
             from and follow the instructions.
         </p>
@@ -83,8 +83,7 @@
                                 </select>
                             </div>
                             <input type="file"
-                                   id="json-file-input"
-                                   name="translations"
+                                   name="json-translations"
                                    accept=".json"
                                    multiple />
                             <input type="button"
@@ -105,7 +104,7 @@
                                 data-target="#form-configuration-excel"
                                 aria-expanded="false"
                                 aria-controls="configuration-files-collapse-one">
-                            Transform Excel Translation File to Form Configuration
+                            Transform Excel Translation File to Form Configurations
                         </button>
                     </h5>
                 </div>
@@ -114,20 +113,42 @@
                      aria-labelledby="configuration-files-heading-one"
                      data-parent="#configuration-files">
                     <div class="card-body">
-                        <form id="form-configuration-excel-form" enctype="multipart/form-data"
-                              method="post"
-                              action="">
-                            <input type="file"
-                                   name="translations"
-                                   accept=".xls,.xlsx" />
-                            <input type="file"
-                                   name="form-configuration-blueprint"
-                                   accept=".json" />
+                        <p>
+                            To create form configurations for multiple languages, this tool needs
+                            both the Excel translation file and the form configuration files for
+                            different languages. The form configurations must be named after the
+                            language key to be used for the translation (e.g. 'de' or 'en').
+                        </p>
+                        <p>
+                            If only one form configuration file is given, it is considered to be the
+                            blueprint for all translation keys. It will then create form configuration
+                            files for all languages that are present in the Excel file.
+                        </p>
+                        <form id="form-configuration-excel-form" enctype="multipart/form-data">
+                            <table>
+                                <tr>
+                                    <td><label>Excel file:</label></td>
+                                    <td>
+                                        <input type="file"
+                                               name="translations"
+                                               accept=".xls,.xlsx" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><label>Form configuration(s):</label></td>
+                                    <td>
+                                        <input type="file"
+                                               name="form-configurations"
+                                               accept=".json"
+                                               multiple />
+                                    </td>
+                                </tr>
+                            </table>
                             <input type="button"
                                    id="excel-to-form-configuration-submit-button"
                                    value="Create Form Configuration files">
                         </form>
-                        <span id="form-configuration-excel-error">Could not transform Excel file.</span>
+                        <span id="form-configuration-excel-error">Could not generate form configurations.</span>
                     </div>
                 </div>
             </div>
@@ -139,7 +160,7 @@
                                 data-target="#form-configuration-json"
                                 aria-expanded="false"
                                 aria-controls="configuration-files-collapse-two">
-                            Transform Form Configuration File to Excel
+                            Transform Form Configuration(s) to Excel
                         </button>
                     </h5>
                 </div>
@@ -150,14 +171,14 @@
                     <div class="card-body">
                         <form id="form-configuration-json-form" enctype="multipart/form-data">
                             <input type="file"
-                                   id="form-configuration-input"
-                                   name="form-configuration"
-                                   accept=".json" />
+                                   name="form-configurations"
+                                   accept=".json"
+                                   multiple />
                             <input type="button"
                                    id="form-configuration-to-excel-submit-button"
                                    value="Create Excel translation file">
                         </form>
-                        <span id="form-configuration-json-error">Could not transform form configuration file.</span>
+                        <span id="form-configuration-json-error">Could not transform form configuration files.</span>
                     </div>
                 </div>
             </div>
