@@ -3,3 +3,4 @@ temp/
 .idea/
 *.js
 *.js.map
+!static/**/*.js
