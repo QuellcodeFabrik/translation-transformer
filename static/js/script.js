@@ -1,9 +1,12 @@
-$('.nav-link').click((element) => {
-   const id = $(element.target).attr('id');
-   const containerId = id.replace('nav-link-', '') + '-files';
+var navLinkElements = $('.nav-link');
+var tabViewElement = $('.tab-view');
 
-   $('.nav-link').each((index, element) => {
-       const navElement = $(element);
+navLinkElements.click(function (element) {
+   var id = $(element.target).attr('id');
+   var containerId = id.replace('nav-link-', '') + '-files';
+
+    navLinkElements.each(function (index, element) {
+       var navElement = $(element);
        if (navElement.attr('id') === id) {
            navElement.addClass('active');
        } else {
@@ -11,8 +14,8 @@ $('.nav-link').click((element) => {
        }
    });
 
-   $('.tab-view').each((index, element) => {
-      const containerElement = $(element);
+   tabViewElement.each(function (index, element) {
+      var containerElement = $(element);
       if (containerElement.attr('id') === containerId) {
           containerElement.removeClass('hidden');
       } else {
@@ -21,18 +24,20 @@ $('.nav-link').click((element) => {
    });
 });
 
-$('#excel-file-input').on('change', () => {
+var jsonFileInput = $('#json-file-input');
+
+jsonFileInput.on('change', function () {
     console.log('File(s) uploaded!');
 
-    const fileList = $('#excel-file-input').prop('files');
+    const fileList = jsonFileInput.prop('files');
     const dropdownContainer = $('#language-selection');
     const dropdown = $('#language-selection-dropdown');
     dropdown.empty();
 
-    let languageKeyCount = 0;
-    for (let i=0; i<fileList.length; i++) {
+    var languageKeyCount = 0;
+    for (var i=0; i<fileList.length; i++) {
         if (fileList[i].name.substr(-5) === '.json') {
-            const languageKey = fileList[i].name.replace('.json', '');
+            var languageKey = fileList[i].name.replace('.json', '');
             dropdown.append($('<option value="' + languageKey + '">' + languageKey + '</option>'));
             languageKeyCount++;
         }

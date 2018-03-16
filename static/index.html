@@ -28,58 +28,122 @@
         </ul>
 
         <div id="angular-files" class="tab-view">
-            <div id="accordion">
-                <div class="card">
-                    <div class="card-header" id="headingOne">
-                        <h5 class="mb-0">
-                            <button class="btn" data-toggle="collapse" data-target="#angularTranslationExcel" aria-expanded="true" aria-controls="collapseOne">
-                                Transform Excel Translation File to JSON
-                            </button>
-                        </h5>
-                    </div>
+            <div class="card">
+                <div class="card-header" id="angular-translation-heading-one">
+                    <h5 class="mb-0">
+                        <button class="btn collapsed"
+                                data-toggle="collapse"
+                                data-target="#angular-translation-excel"
+                                aria-expanded="false"
+                                aria-controls="angular-translation-collapse-one">
+                            Transform Excel Translation File to JSON
+                        </button>
+                    </h5>
+                </div>
 
-                    <div id="angularTranslationExcel" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                        <div class="card-body">
-                            <form enctype="multipart/form-data"
-                                  method="post"
-                                  action="/api/transform-excel">
-                                <input type="hidden" name="test-value" value="test" />
-                                <input type="file" name="translations" />
-                                <input type="submit" value="Create JSON translation files" name="submit">
-                            </form>
-                        </div>
+                <div id="angular-translation-excel"
+                     class="collapse"
+                     aria-labelledby="angular-translation-heading-one"
+                     data-parent="#angular-files">
+                    <div class="card-body">
+                        <form enctype="multipart/form-data"
+                              method="post"
+                              action="/api/transform-excel-to-json-files">
+                            <input type="file" name="translations" />
+                            <input type="submit" value="Create JSON translation files" name="submit">
+                        </form>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-header" id="headingTwo">
-                        <h5 class="mb-0">
-                            <button class="btn collapsed" data-toggle="collapse" data-target="#angularTranslationJson" aria-expanded="false" aria-controls="collapseTwo">
-                                Transform JSON Translation Files to Excel
-                            </button>
-                        </h5>
-                    </div>
-                    <div id="angularTranslationJson" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                        <div class="card-body">
-                            <form enctype="multipart/form-data"
-                                  method="post"
-                                  action="/api/transform-json-files">
-                                <div id="language-selection">
-                                    <label for="language-selection-dropdown">Select your base language:</label>
-                                    <select id="language-selection-dropdown"
-                                            name="base-language">
-                                    </select>
-                                </div>
-                                <input type="file" id="excel-file-input" name="translations" multiple />
-                                <input type="submit" value="Create Excel translation file" name="submit">
-                            </form>
-                        </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="angular-translation-heading-two">
+                    <h5 class="mb-0">
+                        <button class="btn collapsed"
+                                data-toggle="collapse"
+                                data-target="#angular-translation-json"
+                                aria-expanded="false"
+                                aria-controls="angular-translation-collapse-two">
+                            Transform JSON Translation Files to Excel
+                        </button>
+                    </h5>
+                </div>
+                <div id="angular-translation-json"
+                     class="collapse"
+                     aria-labelledby="angular-translation-heading-two"
+                     data-parent="#angular-files">
+                    <div class="card-body">
+                        <form enctype="multipart/form-data"
+                              method="post"
+                              action="/api/transform-json-files">
+                            <div id="language-selection">
+                                <label for="language-selection-dropdown">Select your base language:</label>
+                                <select id="language-selection-dropdown"
+                                        name="base-language">
+                                </select>
+                            </div>
+                            <input type="file" id="json-file-input" name="translations" multiple />
+                            <input type="submit" value="Create Excel translation file" name="submit">
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
 
         <div id="configuration-files" class="tab-view hidden">
-            <p>Form configuration files are not yet supported.</p>
+            <div class="card">
+                <div class="card-header" id="configuration-files-heading-one">
+                    <h5 class="mb-0">
+                        <button class="btn collapsed"
+                                data-toggle="collapse"
+                                data-target="#form-configuration-excel"
+                                aria-expanded="false"
+                                aria-controls="configuration-files-collapse-one">
+                            Transform Excel Translation File to Form Configuration
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="form-configuration-excel"
+                     class="collapse"
+                     aria-labelledby="configuration-files-heading-one"
+                     data-parent="#configuration-files">
+                    <div class="card-body">
+                        <form enctype="multipart/form-data"
+                              method="post"
+                              action="/api/transform-excel-to-form-configuration">
+                            <input type="hidden" name="test-value" value="test" />
+                            <input type="file" name="translations" />
+                            <input type="submit" value="Create JSON translation files" name="submit">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="configuration-files-heading-two">
+                    <h5 class="mb-0">
+                        <button class="btn collapsed"
+                                data-toggle="collapse"
+                                data-target="#form-configuration-json"
+                                aria-expanded="false"
+                                aria-controls="configuration-files-collapse-two">
+                            Transform Form Configuration File to Excel
+                        </button>
+                    </h5>
+                </div>
+                <div id="form-configuration-json"
+                     class="collapse"
+                     aria-labelledby="configuration-files-heading-two"
+                     data-parent="#configuration-files">
+                    <div class="card-body">
+                        <form enctype="multipart/form-data"
+                              method="post"
+                              action="/api/transform-form-configuration">
+                            <input type="file" id="form-configuration-input" name="form-configuration" />
+                            <input type="submit" value="Create Excel translation file" name="submit">
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="property-files" class="tab-view hidden">

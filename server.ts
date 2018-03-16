@@ -65,7 +65,7 @@ server.get('/api/test', (req: Request, res: Response) => {
 
 // REST endpoint to transform an Excel file to different JSON files each of
 // them containing translations for one language key.
-server.post('/api/transform-excel', (req: Request & any, res: Response) => {
+server.post('/api/transform-excel-to-json-files', (req: Request & any, res: Response) => {
   const upload = multer({
     storage,
     fileFilter: (request, file, callback: any) => {
@@ -167,6 +167,18 @@ server.post('/api/transform-json-files', (req: Request & any, res: Response) => 
       fs.rmdirSync(targetDirectory);
     });
   });
+});
+
+// REST endpoint to transform an Excel file to different form configuration
+// files each of them containing translations for one language key.
+server.post('/api/transform-excel-to-form-configuration', (req: Request & any, res: Response) => {
+  res.status(404).end('Not yet implemented.');
+});
+
+// REST endpoint to transform a form configuration into an Excel file
+// containing all keys and available translations
+server.post('/api/transform-form-configuration', (req: Request & any, res: Response) => {
+  res.status(404).end('Not yet implemented.');
 });
 
 // start listening on port 8000
