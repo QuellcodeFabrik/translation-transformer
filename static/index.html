@@ -46,12 +46,15 @@
                      aria-labelledby="angular-translation-heading-one"
                      data-parent="#angular-files">
                     <div class="card-body">
-                        <form enctype="multipart/form-data"
-                              method="post"
-                              action="/api/transform-excel-to-json-files">
-                            <input type="file" name="translations" />
-                            <input type="submit" value="Create JSON translation files" name="submit">
+                        <form enctype="multipart/form-data">
+                            <input type="file"
+                                   name="translations"
+                                   accept=".xls,.xlsx" />
+                            <input type="button"
+                                   id="excel-to-json-submit-button"
+                                   value="Create JSON translation files" />
                         </form>
+                        <span id="angular-translation-excel-error">Could not transform Excel file.</span>
                     </div>
                 </div>
             </div>
@@ -81,7 +84,11 @@
                                         name="base-language">
                                 </select>
                             </div>
-                            <input type="file" id="json-file-input" name="translations" multiple />
+                            <input type="file"
+                                   id="json-file-input"
+                                   name="translations"
+                                   accept=".json"
+                                   multiple />
                             <input type="submit" value="Create Excel translation file" name="submit">
                         </form>
                     </div>
@@ -102,7 +109,6 @@
                         </button>
                     </h5>
                 </div>
-
                 <div id="form-configuration-excel"
                      class="collapse"
                      aria-labelledby="configuration-files-heading-one"
@@ -112,7 +118,9 @@
                               method="post"
                               action="/api/transform-excel-to-form-configuration">
                             <input type="hidden" name="test-value" value="test" />
-                            <input type="file" name="translations" />
+                            <input type="file"
+                                   name="translations"
+                                   accept=".xls,.xlsx" />
                             <input type="submit" value="Create JSON translation files" name="submit">
                         </form>
                     </div>
@@ -138,7 +146,10 @@
                         <form enctype="multipart/form-data"
                               method="post"
                               action="/api/transform-form-configuration">
-                            <input type="file" id="form-configuration-input" name="form-configuration" />
+                            <input type="file"
+                                   id="form-configuration-input"
+                                   name="form-configuration"
+                                   accept=".json" />
                             <input type="submit" value="Create Excel translation file" name="submit">
                         </form>
                     </div>

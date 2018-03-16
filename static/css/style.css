@@ -42,3 +42,8 @@ p {
     visibility: visible;
     height: auto;
 }
+
+#angular-translation-excel-error {
+    color: red;
+    display: none;
+}

@@ -172,13 +172,21 @@ server.post('/api/transform-json-files', (req: Request & any, res: Response) => 
 // REST endpoint to transform an Excel file to different form configuration
 // files each of them containing translations for one language key.
 server.post('/api/transform-excel-to-form-configuration', (req: Request & any, res: Response) => {
-  res.status(404).end('Not yet implemented.');
+  res.status(404).send('Not yet implemented.');
 });
 
 // REST endpoint to transform a form configuration into an Excel file
 // containing all keys and available translations
 server.post('/api/transform-form-configuration', (req: Request & any, res: Response) => {
-  res.status(404).end('Not yet implemented.');
+  res.status(404).send('Not yet implemented.');
+});
+
+server.get('*', (req: Request & any, res: Response) => {
+  res.setHeader('content-type', 'text/plain');
+  res.status(404).send('This route is not available.');
+});
+server.post('*', (req: Request & any, res: Response) => {
+  res.status(404).send('This route is not available.');
 });
 
 // start listening on port 8000
