@@ -46,7 +46,7 @@
                      aria-labelledby="angular-translation-heading-one"
                      data-parent="#angular-files">
                     <div class="card-body">
-                        <form enctype="multipart/form-data">
+                        <form id="angular-translation-excel-form" enctype="multipart/form-data">
                             <input type="file"
                                    name="translations"
                                    accept=".xls,.xlsx" />
@@ -75,9 +75,7 @@
                      aria-labelledby="angular-translation-heading-two"
                      data-parent="#angular-files">
                     <div class="card-body">
-                        <form enctype="multipart/form-data"
-                              method="post"
-                              action="/api/transform-json-files">
+                        <form id="angular-translation-json-form" enctype="multipart/form-data">
                             <div id="language-selection">
                                 <label for="language-selection-dropdown">Select your base language:</label>
                                 <select id="language-selection-dropdown"
@@ -89,13 +87,15 @@
                                    name="translations"
                                    accept=".json"
                                    multiple />
-                            <input type="submit" value="Create Excel translation file" name="submit">
+                            <input type="button"
+                                   id="json-to-excel-submit-button"
+                                   value="Create Excel translation file">
                         </form>
+                        <span id="angular-translation-json-error">Error in processing translation files.</span>
                     </div>
                 </div>
             </div>
         </div>
-
         <div id="configuration-files" class="tab-view hidden">
             <div class="card">
                 <div class="card-header" id="configuration-files-heading-one">
@@ -114,15 +114,17 @@
                      aria-labelledby="configuration-files-heading-one"
                      data-parent="#configuration-files">
                     <div class="card-body">
-                        <form enctype="multipart/form-data"
+                        <form id="form-configuration-excel-form" enctype="multipart/form-data"
                               method="post"
-                              action="/api/transform-excel-to-form-configuration">
-                            <input type="hidden" name="test-value" value="test" />
+                              action="">
                             <input type="file"
                                    name="translations"
                                    accept=".xls,.xlsx" />
-                            <input type="submit" value="Create JSON translation files" name="submit">
+                            <input type="button"
+                                   id="excel-to-form-configuration-submit-button"
+                                   value="Create JSON translation files">
                         </form>
+                        <span id="form-configuration-excel-error">Could not transform Excel file.</span>
                     </div>
                 </div>
             </div>
@@ -143,20 +145,20 @@
                      aria-labelledby="configuration-files-heading-two"
                      data-parent="#configuration-files">
                     <div class="card-body">
-                        <form enctype="multipart/form-data"
-                              method="post"
-                              action="/api/transform-form-configuration">
+                        <form id="form-configuration-json-form" enctype="multipart/form-data">
                             <input type="file"
                                    id="form-configuration-input"
                                    name="form-configuration"
                                    accept=".json" />
-                            <input type="submit" value="Create Excel translation file" name="submit">
+                            <input type="button"
+                                   id="form-configuration-to-excel-submit-button"
+                                   value="Create Excel translation file">
                         </form>
+                        <span id="form-configuration-json-error">Could not transform form configuration file.</span>
                     </div>
                 </div>
             </div>
         </div>
-
         <div id="property-files" class="tab-view hidden">
             <p>Java Property files are not yet supported.</p>
         </div>

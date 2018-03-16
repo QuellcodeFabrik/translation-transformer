@@ -27,8 +27,6 @@ navLinkElements.click(function (element) {
 var jsonFileInput = $('#json-file-input');
 
 jsonFileInput.on('change', function () {
-    console.log('File(s) uploaded!');
-
     const fileList = jsonFileInput.prop('files');
     const dropdownContainer = $('#language-selection');
     const dropdown = $('#language-selection-dropdown');
@@ -43,7 +41,7 @@ jsonFileInput.on('change', function () {
         }
     }
 
-    if (languageKeyCount > 0) {
+    if (languageKeyCount > 1) {
         dropdownContainer.addClass('show');
     } else {
         dropdownContainer.removeClass('show');
@@ -51,17 +49,62 @@ jsonFileInput.on('change', function () {
 });
 
 $('#excel-to-json-submit-button').on('click', function() {
-    $('#angular-translation-excel-error').hide();
+    triggerFileUpload(
+        'angular-translation-excel-form',
+        'angular-translation-excel-error',
+        'translations.zip',
+        '/api/transform-excel-to-json-files'
+    );
+});
 
-    var formData = new FormData($('form')[0]);
+$('#json-to-excel-submit-button').on('click', function() {
+    triggerFileUpload(
+        'angular-translation-json-form',
+        'angular-translation-json-error',
+        'translations.xlsx',
+        '/api/transform-json-files'
+    );
+});
+
+$('#excel-to-form-configuration-submit-button').on('click', function() {
+    triggerFileUpload(
+        'form-configuration-excel-form',
+        'form-configuration-excel-error',
+        'translations.zip',
+        '/api/transform-excel-to-form-configuration'
+    );
+});
+
+$('#form-configuration-to-excel-submit-button').on('click', function() {
+    triggerFileUpload(
+        'form-configuration-json-form',
+        'form-configuration-json-error',
+        'translations.xlsx',
+        '/api/transform-form-configuration'
+    );
+});
+
+/**
+ * Triggers a file upload for the given form Id and handles the server response
+ * accordingly.
+ *
+ * @param formId
+ * @param errorLabelId
+ * @param downloadFileName
+ * @param apiUrl
+ */
+function triggerFileUpload(formId, errorLabelId, downloadFileName, apiUrl) {
+    $('#' + errorLabelId).hide();
+
+    var formData = new FormData($('#' + formId)[0]);
 
     var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if (request.readyState === 4) {
             if (request.status === 200) {
-                saveByteArray('translations.zip', new Uint8Array(request.response), request.getResponseHeader('content-type'));
+                saveByteArray(downloadFileName, new Uint8Array(request.response), request.getResponseHeader('content-type'));
             } else if (request.responseText !== '') {
-                var errorSpan = $('#angular-translation-excel-error');
+                var errorSpan = $('#' + errorLabelId);
                 errorSpan.text(request.responseText);
                 errorSpan.show();
             }
@@ -74,10 +117,18 @@ $('#excel-to-json-submit-button').on('click', function() {
             }
         }
     };
-    request.open('POST', '/api/transform-excel-to-json-files', true);
+    request.open('POST', apiUrl, true);
     request.send(formData);
-});
+}
 
+/**
+ * Create a temporary download link and trigger it to make the browser offer a
+ * download dialogue.
+ *
+ * @param filename
+ * @param data
+ * @param type
+ */
 function saveByteArray(filename, data, type) {
     var blob = new Blob([data], { type: type });
     var link = document.createElement('a');
