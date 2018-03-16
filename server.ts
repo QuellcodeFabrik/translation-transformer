@@ -127,7 +127,7 @@ server.post('/api/transform-excel-to-json-files', (req: Request & any, res: Resp
 
 // REST endpoint to transform multiple JSON files into one Excel file
 // containing all keys and available translations
-server.post('/api/transform-json-files', (req: Request & any, res: Response) => {
+server.post('/api/transform-json-files-to-excel', (req: Request & any, res: Response) => {
   const upload = multer({
     storage,
     fileFilter: (request, file, callback: any) => {
@@ -181,7 +181,7 @@ server.post('/api/transform-excel-to-form-configuration', (req: Request & any, r
 
 // REST endpoint to transform a form configuration into an Excel file
 // containing all keys and available translations
-server.post('/api/transform-form-configuration', (req: Request & any, res: Response) => {
+server.post('/api/transform-form-configuration-to-excel', (req: Request & any, res: Response) => {
   res.status(404).send('Not yet implemented.');
 });
 

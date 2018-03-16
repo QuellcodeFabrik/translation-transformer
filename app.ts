@@ -24,6 +24,10 @@ export function createExcelFromJsonTranslationFiles(targetDirectory: string, bas
   const translationObjects: TranslationMetaFormat[] =
       jsonParser.parseFilesFromDirectory(targetDirectory);
 
+  if (!translationObjects || translationObjects.length === 0) {
+    throw Error('No JSON translation files have been selected.');
+  }
+
   const excelHeader = ['key', baseLanguage];
 
   // rearrange header to have the base language at the second position
@@ -55,7 +59,7 @@ export function createJsonTranslationFilesFromExcel(targetDirectory: string, exc
 
   if (!fs.existsSync(excelFilePath)) {
     console.warn('Excel file does not exist.');
-    return;
+    throw Error('No Excel file has been selected.');
   }
 
   const wb = ExcelWorker.readFile(excelFilePath);

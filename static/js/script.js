@@ -62,7 +62,7 @@ $('#json-to-excel-submit-button').on('click', function() {
         'angular-translation-json-form',
         'angular-translation-json-error',
         'translations.xlsx',
-        '/api/transform-json-files'
+        '/api/transform-json-files-to-excel'
     );
 });
 
@@ -80,7 +80,7 @@ $('#form-configuration-to-excel-submit-button').on('click', function() {
         'form-configuration-json-form',
         'form-configuration-json-error',
         'translations.xlsx',
-        '/api/transform-form-configuration'
+        '/api/transform-form-configuration-to-excel'
     );
 });
 
@@ -109,7 +109,7 @@ function triggerFileUpload(formId, errorLabelId, downloadFileName, apiUrl) {
             } else if (request.responseText !== '') {
                 var errorSpan = $('#' + errorLabelId);
                 errorSpan.text(request.responseText);
-                errorSpan.show();
+                errorSpan.show().css('display', 'block');
             }
         } else if (request.readyState === 2) {
             // change response type to text in case it is in error state

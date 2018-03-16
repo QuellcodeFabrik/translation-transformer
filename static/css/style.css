@@ -49,4 +49,5 @@ p {
 #form-configuration-json-error {
     color: red;
     display: none;
+    padding-top: 0.5em;
 }

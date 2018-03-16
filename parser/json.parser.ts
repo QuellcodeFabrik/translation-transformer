@@ -18,7 +18,7 @@ export class JsonParser implements Parser {
         }
       });
     } else {
-      console.error('Could not find absolute path:', absolutePath);
+      console.error('Upload directory does not exist:', absolutePath);
     }
 
     if (jsonFileList.length === 0) {
