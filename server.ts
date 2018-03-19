@@ -183,7 +183,49 @@ server.post('/api/transform-excel-to-form-configurations', (req: Request & any, 
 // REST endpoint to transform a form configuration into an Excel file
 // containing all keys and available translations
 server.post('/api/transform-form-configurations-to-excel', (req: Request & any, res: Response) => {
-  res.status(500).send('Not yet implemented.');
+  const upload = multer({
+    storage,
+    fileFilter: (request, file, callback: any) => {
+      if (path.extname(file.originalname) !== '.json') {
+        return callback(Error('Only .json files are allowed.'), null);
+      }
+      callback(null, true);
+    }}).array('form-configurations', 20);
+
+  const uniqueId = shortid.generate();
+  req.userToken = uniqueId;
+  req.useOriginalFileName = true;
+
+  upload(req, res, (err: Error) => {
+    if (err) {
+      console.error('Something went wrong with JSON files upload:', err.message);
+      return res.status(500).send(err.message);
+    }
+
+    const baseLanguage = req.body['base-language'];
+    console.log('Base language:', baseLanguage);
+
+    const targetDirectory = path.join(__dirname, 'temp', uniqueId);
+
+    try {
+      app.createExcelFromFormConfigurationFiles(targetDirectory, baseLanguage);
+    } catch(ex) {
+      return res.status(500).send(ex.message);
+    }
+
+    res.download(path.join(targetDirectory, 'translations.xlsx'), 'translations.xlsx', (downloadError: Error) => {
+      if (downloadError) {
+        console.error('Could not send translations.xlsx to client:', downloadError);
+      }
+
+      // delete uniqueId folder and all content
+      fs.readdirSync(targetDirectory).forEach((fileName: string) => {
+        fs.unlinkSync(path.join(targetDirectory, fileName));
+      });
+
+      fs.rmdirSync(targetDirectory);
+    });
+  });
 });
 
 server.get('*', (req: Request & any, res: Response) => {

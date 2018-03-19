@@ -2,6 +2,7 @@ import * as ExcelWorker from 'xlsx';
 import * as path from 'path';
 import * as fs from 'fs';
 import { JsonParser } from './parser/json.parser';
+import { FormConfigurationParser } from './parser/form.parser';
 
 export interface TranslationMetaFormat {
   // the actual translation key
@@ -9,6 +10,26 @@ export interface TranslationMetaFormat {
 
   // any number of language keys with their corresponding translations
   [languageKey: string]: string;
+}
+
+/**
+ * Parses the JSON translation files in the given directory and creates an
+ * Excel workbook out of it.
+ *
+ * @param {string} targetDirectory
+ * @param {string} baseLanguage
+ */
+export function createExcelFromFormConfigurationFiles(targetDirectory: string, baseLanguage: string) {
+  const formConfigurationParser = new FormConfigurationParser();
+
+  const translationObjects: TranslationMetaFormat[] =
+    formConfigurationParser.parseFilesFromDirectory(targetDirectory);
+
+  if (!translationObjects || translationObjects.length === 0) {
+    throw Error('No form configuration files have been selected.');
+  }
+
+  createExcelFile(targetDirectory, translationObjects, baseLanguage);
 }
 
 /**
@@ -28,24 +49,7 @@ export function createExcelFromJsonTranslationFiles(targetDirectory: string, bas
     throw Error('No JSON translation files have been selected.');
   }
 
-  const excelHeader = ['key', baseLanguage];
-
-  // rearrange header to have the base language at the second position
-  Object.keys(translationObjects[0]).forEach((languageKey: string) => {
-    if (excelHeader.indexOf(languageKey) === -1) {
-      excelHeader.push(languageKey);
-    }
-  });
-
-  const ws = ExcelWorker.utils.json_to_sheet(translationObjects, {
-      header: excelHeader
-  });
-
-  const wb = { SheetNames: ['DCP_Translations'], Sheets: {
-          DCP_Translations: ws
-      }};
-
-  ExcelWorker.writeFile(wb, path.join(targetDirectory, 'translations.xlsx'));
+  createExcelFile(targetDirectory, translationObjects, baseLanguage);
 }
 
 /**
@@ -91,4 +95,36 @@ export function createJsonTranslationFilesFromExcel(targetDirectory: string, exc
     fs.writeFileSync(path.join(targetDirectory, languageKey + '.json'),
       JSON.stringify(result, null, 2));
   });
+}
+
+/**
+ *
+ *
+ * @param {string} targetDirectory
+ * @param {TranslationMetaFormat[]} translations
+ * @param {string} baseLanguage
+ */
+function createExcelFile(targetDirectory: string, translations: TranslationMetaFormat[], baseLanguage?: string) {
+  const excelHeader = ['key'];
+
+  // always have the base language at the second position
+  if (baseLanguage) {
+    excelHeader.push(baseLanguage);
+  }
+
+  Object.keys(translations[0]).forEach((languageKey: string) => {
+    if (excelHeader.indexOf(languageKey) === -1) {
+      excelHeader.push(languageKey);
+    }
+  });
+
+  const ws = ExcelWorker.utils.json_to_sheet(translations, {
+    header: excelHeader
+  });
+
+  const wb = { SheetNames: ['DCP_Translations'], Sheets: {
+      DCP_Translations: ws
+    }};
+
+  ExcelWorker.writeFile(wb, path.join(targetDirectory, 'translations.xlsx'));
 }
