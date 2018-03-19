@@ -53,6 +53,82 @@ export function createExcelFromJsonTranslationFiles(targetDirectory: string, bas
 }
 
 /**
+ * Creates the form configuration files from the given Excel file. Additionally
+ * it uses the uploaded form configuration file(s). There are two scenarios:
+ *
+ * 1. Only one form configuration file was uploaded:
+ *    This form configuration file shall be used as blueprint to create form
+ *    configuration files for all languages that are present in the Excel file.
+ *
+ * 2. Multiple form configurations have been uploaded:
+ *    Those uploaded form configurations shall be updated based on the
+ *    translations given in the Excel file.
+ *
+ * @param {string} targetDirectory
+ * @param {string} excelFileName
+ */
+export function createFormConfigurationsFromExcel(targetDirectory: string, excelFileName: string) {
+  const excelFilePath = path.join(targetDirectory, excelFileName);
+  const formConfigurationFiles: any = {};
+
+  const translationObjects: TranslationMetaFormat[] =
+    parseExcelFile(excelFilePath);
+
+  if (translationObjects.length === 0) {
+    return;
+  }
+
+  const availableLanguageKeys: string[] = Object.keys(translationObjects[0]).slice(1);
+  console.log('Available languages:', availableLanguageKeys);
+
+  fs.readdirSync(targetDirectory).forEach((fileName: string) => {
+    if (fileName.substr(-5) === '.json') {
+      const filePath = path.join(targetDirectory, fileName);
+      const languageKey = fileName.replace('.json', '');
+
+      // parse file content as JSON
+      formConfigurationFiles[languageKey] = JSON.parse(fs.readFileSync(filePath, {
+        encoding: 'utf8'
+      }));
+    }
+  });
+
+  const numberOfFormConfigurations = Object.keys(formConfigurationFiles).length;
+
+  if (numberOfFormConfigurations === 1) {
+    console.log('Using provided form configuration file as blueprint.');
+  } else if (numberOfFormConfigurations > 1) {
+    console.log('Modifying provided from configuration files.');
+  } else {
+    throw Error('No form configuration file provided.');
+  }
+
+  availableLanguageKeys.forEach((languageKey: string) => {
+    let result: any;
+
+    if (numberOfFormConfigurations > 1) {
+      if (formConfigurationFiles.hasOwnProperty(languageKey)) {
+        result = formConfigurationFiles[languageKey];
+
+        translationObjects.forEach((translationObject: TranslationMetaFormat) => {
+          // TODO implement
+          // apply translations if key matches the given form / element
+        });
+      } else {
+        console.warn(`No form configuration file for '${languageKey}' provided.`);
+      }
+    }
+
+    if (result !== undefined) {
+      fs.writeFileSync(path.join(targetDirectory, languageKey + '.json'),
+        JSON.stringify(result, null, 2));
+    } else {
+      console.warn(`Could not create form configuration for '${languageKey}'.`);
+    }
+  });
+}
+
+/**
  * Creates the JSON translation files from the given Excel file.
  *
  * @param {string} targetDirectory absolute path to the output directory
@@ -61,24 +137,10 @@ export function createExcelFromJsonTranslationFiles(targetDirectory: string, bas
 export function createJsonTranslationFilesFromExcel(targetDirectory: string, excelFileName: string) {
   const excelFilePath = path.join(targetDirectory, excelFileName);
 
-  if (!fs.existsSync(excelFilePath)) {
-    console.warn('Excel file does not exist.');
-    throw Error('No Excel file has been selected.');
-  }
-
-  const wb = ExcelWorker.readFile(excelFilePath);
-  const ws = wb.Sheets[wb.SheetNames[0]];
-
-  if (!ws.A1 || ws.A1.v !== 'key') {
-    console.warn('Worksheet format is not correct.');
-    throw Error('Worksheet format is not correct. Key column is missing.');
-  }
-
   const translationObjects: TranslationMetaFormat[] =
-      ExcelWorker.utils.sheet_to_json(ws, {});
+      parseExcelFile(excelFilePath);
 
-  if (!translationObjects || translationObjects.length === 0) {
-    console.warn('No translation data found in Excel sheet.');
+  if (translationObjects.length === 0) {
     return;
   }
 
@@ -98,7 +160,7 @@ export function createJsonTranslationFilesFromExcel(targetDirectory: string, exc
 }
 
 /**
- *
+ * Creates an Excel file at the given target directory.
  *
  * @param {string} targetDirectory
  * @param {TranslationMetaFormat[]} translations
@@ -127,4 +189,36 @@ function createExcelFile(targetDirectory: string, translations: TranslationMetaF
     }};
 
   ExcelWorker.writeFile(wb, path.join(targetDirectory, 'translations.xlsx'));
+}
+
+/**
+ * Parses the Excel file at the given target directory and returns the
+ * translations in an Array of TranslationMetaFormat objects.
+ *
+ * @param {string} excelFilePath
+ * @returns {TranslationMetaFormat[]}
+ */
+function parseExcelFile(excelFilePath: string): TranslationMetaFormat[] {
+  if (!fs.existsSync(excelFilePath)) {
+    console.warn('Excel file does not exist.');
+    throw Error('No Excel file has been selected.');
+  }
+
+  const wb = ExcelWorker.readFile(excelFilePath);
+  const ws = wb.Sheets[wb.SheetNames[0]];
+
+  if (!ws.A1 || ws.A1.v !== 'key') {
+    console.warn('Worksheet format is not correct.');
+    throw Error('Worksheet format is not correct. Key column is missing.');
+  }
+
+  const translationObjects: TranslationMetaFormat[] =
+    ExcelWorker.utils.sheet_to_json(ws, {});
+
+  if (!translationObjects || translationObjects.length === 0) {
+    console.warn('No translation data found in Excel sheet.');
+    return [];
+  }
+
+  return translationObjects;
 }
