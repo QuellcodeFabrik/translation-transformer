@@ -6,7 +6,7 @@ export interface Composer {
    * successful.
    *
    * @param configuration
-   * @returns {boolean}
+   * @returns {boolean} true if initialization was successful
    */
   initialize(configuration: any): boolean;
 
@@ -16,7 +16,7 @@ export interface Composer {
    *
    * @param {TranslationMetaFormat[]} input
    * @param {string} absoluteTargetLocation
-   * @returns {number}
+   * @returns {number} number of created files
    */
   createTranslationFiles(
     input: TranslationMetaFormat[], absoluteTargetLocation: string): number;

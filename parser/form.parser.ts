@@ -1,20 +1,9 @@
 import { Parser } from './parser';
 import { TranslationMetaFormat } from '../app';
+import { FormElement, TitleMap } from '../contracts/form-configuration.contract';
+import * as helper from '../helper/helper';
 import * as path from 'path';
 import * as fs from 'fs';
-
-interface FormElement {
-  key: string;
-  type: string;
-  title?: string;
-  titleMap?: TitleMap[];
-  validationMessage?: { [index: string]: string };
-}
-
-interface TitleMap {
-  name: string;
-  value: any;
-}
 
 /**
  * A file parser that gets translations from form configuration files and puts
@@ -81,7 +70,7 @@ export class FormConfigurationParser implements Parser {
         // collect all available keys from JSON content
         existingFormConfigurations[fileName].formElementConfigurations.forEach((element: FormElement) => {
           const baseTranslationKey = 'form.' +
-            FormConfigurationParser.normalizeFormId(existingFormConfigurations[fileName].id) + '.' +
+            helper.normalizeFormId(existingFormConfigurations[fileName].id) + '.' +
             element.key;
 
           let translationKey: string;
@@ -139,16 +128,5 @@ export class FormConfigurationParser implements Parser {
     }
 
     existingKeys[key][language] = value;
-  }
-
-  /**
-   * Remove all dots from the form id to not confuse it with the dots used in
-   * the translation keys.
-   *
-   * @param {string} id
-   * @returns {string}
-   */
-  private static normalizeFormId(id: string): string {
-    return id.replace(/\./gi, '_');
   }
 }

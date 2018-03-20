@@ -202,11 +202,11 @@ server.post('/api/transform-excel-to-form-configurations', (req: Request & any, 
     const formConfigurationFiles = req.files['form-configurations'];
 
     if (!excelFile || excelFile.length === 0) {
-      res.status(500).send('No Excel file has been selected.');
+      return res.status(500).send('No Excel file has been selected.');
     }
 
     if (!formConfigurationFiles || formConfigurationFiles.length === 0) {
-      res.status(500).send('No form configuration file(s) have been selected.');
+      return res.status(500).send('No form configuration file(s) have been selected.');
     }
 
     const targetDirectory = path.join(__dirname, 'temp', uniqueId);
