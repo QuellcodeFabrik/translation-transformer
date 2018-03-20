@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Parser } from './parser';
-import { TranslationMetaFormat } from '../app';
+import { TranslationMetaFormat } from '../contracts/app.contract';
 
 /**
  * A file parser that gets translations from JSON translation files and puts

@@ -1,4 +1,4 @@
-import { TranslationMetaFormat } from '../app';
+import { TranslationMetaFormat } from '../contracts/app.contract';
 
 export interface Parser {
   /**

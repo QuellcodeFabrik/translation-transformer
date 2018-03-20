@@ -1,9 +1,9 @@
-import { Parser } from './parser';
-import { TranslationMetaFormat } from '../app';
-import { FormElement, TitleMap } from '../contracts/form-configuration.contract';
 import * as helper from '../helper/helper';
 import * as path from 'path';
 import * as fs from 'fs';
+import { Parser } from './parser';
+import { TranslationMetaFormat } from '../contracts/app.contract';
+import { FormElement, TitleMap } from '../contracts/form-configuration.contract';
 
 /**
  * A file parser that gets translations from form configuration files and puts

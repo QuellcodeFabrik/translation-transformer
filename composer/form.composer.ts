@@ -1,9 +1,9 @@
-import { Composer } from './composer';
-import { TranslationMetaFormat } from '../app';
-import { FormConfiguration, FormElement, TitleMap } from '../contracts/form-configuration.contract';
 import * as helper from '../helper/helper';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Composer } from './composer';
+import { TranslationMetaFormat } from '../contracts/app.contract';
+import { FormConfiguration, FormElement, TitleMap } from '../contracts/form-configuration.contract';
 
 /**
  * A file composer that gets translations in a meta format and writes those

@@ -1,7 +1,7 @@
-import { Composer } from './composer';
-import { TranslationMetaFormat } from '../app';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Composer } from './composer';
+import { TranslationMetaFormat } from '../contracts/app.contract';
 
 /**
  * A file composer that gets translations in a meta format and writes those

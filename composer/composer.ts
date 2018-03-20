@@ -1,4 +1,4 @@
-import { TranslationMetaFormat } from '../app';
+import { TranslationMetaFormat } from '../contracts/app.contract';
 
 export interface Composer {
   /**
@@ -16,8 +16,9 @@ export interface Composer {
    *
    * @param {TranslationMetaFormat[]} input
    * @param {string} absoluteTargetLocation
+   * @param {string} baseLanguage
    * @returns {number} number of created files
    */
   createTranslationFiles(
-    input: TranslationMetaFormat[], absoluteTargetLocation: string): number;
+    input: TranslationMetaFormat[], absoluteTargetLocation: string, baseLanguage?: string): number;
 }

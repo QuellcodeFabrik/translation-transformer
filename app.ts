@@ -1,18 +1,11 @@
-import * as ExcelWorker from 'xlsx';
 import * as path from 'path';
-import * as fs from 'fs';
 import { JsonParser } from './parser/json.parser';
 import { FormConfigurationParser } from './parser/form.parser';
 import { FormConfigurationComposer } from './composer/form.composer';
 import { JsonComposer } from './composer/json.composer';
-
-export interface TranslationMetaFormat {
-  // the actual translation key
-  key: string;
-
-  // any number of language keys with their corresponding translations
-  [languageKey: string]: string;
-}
+import { TranslationMetaFormat } from './contracts/app.contract';
+import { ExcelParser } from './parser/excel.parser';
+import { ExcelComposer } from './composer/excel.composer';
 
 /**
  * Parses the JSON translation files in the given directory and creates an
@@ -31,7 +24,7 @@ export function createExcelFromFormConfigurationFiles(targetDirectory: string, b
     throw Error('No form configuration files have been selected.');
   }
 
-  createExcelFile(targetDirectory, translationObjects, baseLanguage);
+  new ExcelComposer().createTranslationFiles(translationObjects, targetDirectory, baseLanguage);
 }
 
 /**
@@ -51,7 +44,7 @@ export function createExcelFromJsonTranslationFiles(targetDirectory: string, bas
     throw Error('No JSON translation files have been selected.');
   }
 
-  createExcelFile(targetDirectory, translationObjects, baseLanguage);
+  new ExcelComposer().createTranslationFiles(translationObjects, targetDirectory, baseLanguage);
 }
 
 /**
@@ -64,7 +57,7 @@ export function createFormConfigurationsFromExcel(targetDirectory: string, excel
   const excelFilePath = path.join(targetDirectory, excelFileName);
 
   const translationObjects: TranslationMetaFormat[] =
-    parseExcelFile(excelFilePath);
+    new ExcelParser().parseFiles([excelFilePath]);
 
   if (translationObjects.length === 0) {
     return;
@@ -86,7 +79,7 @@ export function createJsonTranslationFilesFromExcel(targetDirectory: string, exc
   const excelFilePath = path.join(targetDirectory, excelFileName);
 
   const translationObjects: TranslationMetaFormat[] =
-      parseExcelFile(excelFilePath);
+    new ExcelParser().parseFiles([excelFilePath]);
 
   if (translationObjects.length === 0) {
     return;
@@ -96,68 +89,4 @@ export function createJsonTranslationFilesFromExcel(targetDirectory: string, exc
     new JsonComposer().createTranslationFiles(translationObjects, targetDirectory);
 
   console.log(`${numberOfCreatedFormConfigurationFiles} JSON translation files created.`);
-}
-
-/**
- * Creates an Excel file at the given target directory.
- *
- * @param {string} targetDirectory
- * @param {TranslationMetaFormat[]} translations
- * @param {string} baseLanguage
- */
-function createExcelFile(targetDirectory: string, translations: TranslationMetaFormat[], baseLanguage?: string) {
-  const excelHeader = ['key'];
-
-  // always have the base language at the second position
-  if (baseLanguage) {
-    excelHeader.push(baseLanguage);
-  }
-
-  Object.keys(translations[0]).forEach((languageKey: string) => {
-    if (excelHeader.indexOf(languageKey) === -1) {
-      excelHeader.push(languageKey);
-    }
-  });
-
-  const ws = ExcelWorker.utils.json_to_sheet(translations, {
-    header: excelHeader
-  });
-
-  const wb = { SheetNames: ['DCP_Translations'], Sheets: {
-      DCP_Translations: ws
-    }};
-
-  ExcelWorker.writeFile(wb, path.join(targetDirectory, 'translations.xlsx'));
-}
-
-/**
- * Parses the Excel file at the given target directory and returns the
- * translations in an Array of TranslationMetaFormat objects.
- *
- * @param {string} excelFilePath
- * @returns {TranslationMetaFormat[]}
- */
-function parseExcelFile(excelFilePath: string): TranslationMetaFormat[] {
-  if (!fs.existsSync(excelFilePath)) {
-    console.warn('Excel file does not exist.');
-    throw Error('No Excel file has been selected.');
-  }
-
-  const wb = ExcelWorker.readFile(excelFilePath);
-  const ws = wb.Sheets[wb.SheetNames[0]];
-
-  if (!ws.A1 || ws.A1.v !== 'key') {
-    console.warn('Worksheet format is not correct.');
-    throw Error('Worksheet format is not correct. Key column is missing.');
-  }
-
-  const translationObjects: TranslationMetaFormat[] =
-    ExcelWorker.utils.sheet_to_json(ws, {});
-
-  if (!translationObjects || translationObjects.length === 0) {
-    console.warn('No translation data found in Excel sheet.');
-    return [];
-  }
-
-  return translationObjects;
 }
