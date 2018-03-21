@@ -84,6 +84,24 @@ $('#form-configuration-to-excel-submit-button').on('click', function() {
     );
 });
 
+$('#excel-to-property-file-submit-button').on('click', function() {
+    triggerFileUpload(
+        'java-property-excel-form',
+        'java-property-excel-error',
+        'translations.zip',
+        '/api/transform-excel-to-java-property-files'
+    );
+});
+
+$('#java-property-to-excel-submit-button').on('click', function() {
+    triggerFileUpload(
+        'java-property-file-form',
+        'java-property-file-error',
+        'translations.xlsx',
+        '/api/transform-java-property-files-to-excel'
+    );
+});
+
 /**
  * Triggers a file upload for the given form Id and handles the server response
  * accordingly.

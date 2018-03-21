@@ -54,7 +54,9 @@ tr td:first-of-type {
 #angular-translation-excel-error,
 #angular-translation-json-error,
 #form-configuration-excel-error,
-#form-configuration-json-error {
+#form-configuration-json-error,
+#java-property-excel-error,
+#java-property-file-error {
     color: red;
     display: none;
     padding-top: 0.5em;

@@ -298,6 +298,120 @@ server.post('/api/transform-form-configurations-to-excel', (req: Request & any, 
   });
 });
 
+// REST endpoint to transform an Excel file to different Java property files
+// each of them containing translations for one language key.
+server.post('/api/transform-excel-to-java-property-files', (req: Request & any, res: Response) => {
+  const upload = multer({
+    storage,
+    fileFilter: (request, file, callback: any) => {
+      if (path.extname(file.originalname) !== '.xlsx') {
+        return callback(Error('Only .xlsx files are allowed.'), null);
+      }
+      callback(null, true);
+    }}).single('translations');
+
+  const uniqueId = shortid.generate();
+  req.userToken = uniqueId;
+
+  upload(req, res, (err: Error) => {
+    if (err) {
+      console.error('Something went wrong with Excel file upload:', err.message);
+      return res.status(500).send(err.message);
+    }
+
+    const targetDirectory = path.join(__dirname, 'temp', uniqueId);
+
+    res.status(404).send('Not yet implemented.');
+
+    // try {
+    //   app.createJsonTranslationFilesFromExcel(targetDirectory, 'translations.xlsx');
+    // } catch (ex) {
+    //   return res.status(500).send(ex.message);
+    // }
+    //
+    // // The zip library needs to be instantiated:
+    // const zipFileLibrary = require('node-zip');
+    // const zip = new zipFileLibrary();
+    //
+    // // You can add multiple files by performing subsequent calls to zip.file();
+    // // the first argument is how you want the file to be named inside your zip,
+    // // the second is the actual data:
+    // fs.readdirSync(targetDirectory).forEach((fileName: string) => {
+    //   if (fileName.substr(-5) === '.json') {
+    //     zip.file(fileName, fs.readFileSync(path.join(targetDirectory, fileName)));
+    //   }
+    // });
+    //
+    // const data = zip.generate({ base64: false, compression: 'DEFLATE' });
+    //
+    // // it's important to use *binary* encode
+    // fs.writeFileSync(path.join(targetDirectory, 'translations.zip'), data, 'binary');
+    //
+    // res.download(path.join(targetDirectory, 'translations.zip'), 'translations.zip', (downloadError: Error) => {
+    //   if (downloadError) {
+    //     console.error('Could not send translations.zip to client:', downloadError);
+    //   }
+    //
+    //   // delete uniqueId folder and all content
+    //   fs.readdirSync(targetDirectory).forEach((fileName: string) => {
+    //     fs.unlinkSync(path.join(targetDirectory, fileName));
+    //   });
+    //
+    //   fs.rmdirSync(targetDirectory);
+    // });
+  });
+});
+
+// REST endpoint to transform multiple Java property files into one Excel file
+// containing all keys and available translations
+server.post('/api/transform-java-property-files-to-excel', (req: Request & any, res: Response) => {
+  const upload = multer({
+    storage,
+    fileFilter: (request, file, callback: any) => {
+      if (path.extname(file.originalname) !== '.properties') {
+        return callback(Error('Only .properties files are allowed.'), null);
+      }
+      callback(null, true);
+    }}).array('java-property-files', 20);
+
+  const uniqueId = shortid.generate();
+  req.userToken = uniqueId;
+  req.useOriginalFileName = true;
+
+  upload(req, res, (err: Error) => {
+    if (err) {
+      console.error('Something went wrong with JSON files upload:', err.message);
+      return res.status(500).send(err.message);
+    }
+
+    const baseLanguage = req.body['base-language'];
+    console.log('Base language:', baseLanguage);
+
+    const targetDirectory = path.join(__dirname, 'temp', uniqueId);
+
+    res.status(404).send('Not yet implemented.');
+
+    // try {
+    //   app.createExcelFromJsonTranslationFiles(targetDirectory, baseLanguage);
+    // } catch (ex) {
+    //   return res.status(500).send(ex.message);
+    // }
+    //
+    // res.download(path.join(targetDirectory, 'translations.xlsx'), 'translations.xlsx', (downloadError: Error) => {
+    //   if (downloadError) {
+    //     console.error('Could not send translations.xlsx to client:', downloadError);
+    //   }
+    //
+    //   // delete uniqueId folder and all content
+    //   fs.readdirSync(targetDirectory).forEach((fileName: string) => {
+    //     fs.unlinkSync(path.join(targetDirectory, fileName));
+    //   });
+    //
+    //   fs.rmdirSync(targetDirectory);
+    // });
+  });
+});
+
 server.get('*', (req: Request & any, res: Response) => {
   res.setHeader('content-type', 'text/plain');
   res.status(404).send('This route is not available.');

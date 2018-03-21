@@ -203,7 +203,84 @@
             </div>
         </div>
         <div id="property-files" class="tab-view hidden">
-            <p>Java Property files are not yet supported.</p>
+            <div class="card">
+                <div class="card-header" id="java-property-heading-one">
+                    <h5 class="mb-0">
+                        <button class="btn collapsed"
+                                data-toggle="collapse"
+                                data-target="#java-property-excel"
+                                aria-expanded="false"
+                                aria-controls="java-property-collapse-one">
+                            Transform Excel Translation File to Java Property Files
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="java-property-excel"
+                     class="collapse"
+                     aria-labelledby="java-property-heading-one"
+                     data-parent="#property-files">
+                    <div class="card-body">
+                        <p>
+                            Once you created an Excel file with this tool, you can work
+                            on the translations and then when you are done upload the
+                            Excel file with all translations here. It will in turn generate
+                            one Java property file for each language key that is present
+                            in the Excel file.
+                        </p>
+                        <form id="java-property-excel-form" enctype="multipart/form-data">
+                            <input type="file"
+                                   name="translations"
+                                   accept=".xls,.xlsx" />
+                            <input type="button"
+                                   id="excel-to-property-file-submit-button"
+                                   value="Create Java property files" />
+                        </form>
+                        <span id="java-property-excel-error">Could not transform Excel file.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="java-property-heading-two">
+                    <h5 class="mb-0">
+                        <button class="btn collapsed"
+                                data-toggle="collapse"
+                                data-target="#java-property-files"
+                                aria-expanded="false"
+                                aria-controls="java-property-collapse-two">
+                            Transform Java Property Files to Excel
+                        </button>
+                    </h5>
+                </div>
+                <div id="java-property-files"
+                     class="collapse"
+                     aria-labelledby="angular-translation-heading-two"
+                     data-parent="#angular-files">
+                    <div class="card-body">
+                        <p>
+                            You can upload up to 20 Java property files each of them representing
+                            one language that needs to be translated. If you upload more than one
+                            property file, you should also specify the base language in the form.
+                        </p>
+                        <form id="java-property-file-form" enctype="multipart/form-data">
+                            <div id="language-selection">
+                                <label for="language-selection-dropdown">Select your base language:</label>
+                                <select id="language-selection-dropdown"
+                                        name="base-language">
+                                </select>
+                            </div>
+                            <input type="file"
+                                   name="java-property-files"
+                                   accept=".properties"
+                                   multiple />
+                            <input type="button"
+                                   id="java-property-to-excel-submit-button"
+                                   value="Create Excel translation file">
+                        </form>
+                        <span id="java-property-file-error">Error in processing property files.</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
