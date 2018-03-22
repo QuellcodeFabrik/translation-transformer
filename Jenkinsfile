@@ -11,8 +11,7 @@ node {
     stage("Delete existing images") {
         sh "echo 'Deleting stale images...'"
 
-        // TODO fix the following line
-        // sh "docker images 'mbio-translation-transformer' | xargs --no-run-if-empty docker rmi"
+        sh "docker images --filter=reference='mbio-translation-transformer' --format '{{.ID}}' | xargs --no-run-if-empty docker rmi"
     }
 
     stage("Check out sources") {
