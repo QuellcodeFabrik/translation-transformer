@@ -55,8 +55,8 @@ server.use((err: any, req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-// serve static files from static folder
-server.use(express.static('static'));
+// serve static files from dcp folder
+server.use(express.static('dcp'));
 
 // REST test endpoint to check if API is set into place.
 server.get('/api/test', (req: Request, res: Response) => {
