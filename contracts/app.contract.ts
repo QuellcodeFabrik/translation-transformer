@@ -9,3 +9,14 @@ export interface TranslationMetaFormat {
   // any number of language keys with their corresponding translations
   [languageKey: string]: string;
 }
+
+/**
+ * To be able to map translation keys in an Excel file to the file it
+ * originated from, this mapping structure will be used an persisted to the
+ * Excel file.
+ */
+export interface FileMapping {
+  translationKey: string;
+  languageKey: string;
+  fileName: string;
+}

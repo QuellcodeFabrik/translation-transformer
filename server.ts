@@ -387,6 +387,14 @@ server.post('/api/transform-java-property-files-to-excel', (req: Request & any, 
     const baseLanguage = req.body['base-language'];
     console.log('Base language:', baseLanguage);
 
+    const fileNameLanguageMapping = Object.keys(req.body).filter((formField: string) => {
+      return formField.indexOf('file:') === 0;
+    }).map((formField: string) => {
+      return { fileName: formField.substr(5), languagKey: req.body[formField] };
+    });
+
+    console.log('File name language mappings:', fileNameLanguageMapping);
+
     const targetDirectory = path.join(__dirname, 'temp', uniqueId);
 
     res.status(404).send('Not yet implemented.');

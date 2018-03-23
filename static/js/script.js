@@ -1,3 +1,7 @@
+//
+// Navigation functionality
+//
+
 var navLinkElements = $('.nav-link');
 var tabViewElement = $('.tab-view');
 
@@ -23,6 +27,10 @@ navLinkElements.click(function (element) {
       }
    });
 });
+
+//
+// JSON translation file input
+//
 
 var jsonFileInput = $('#json-file-input');
 
@@ -66,6 +74,115 @@ $('#json-to-excel-submit-button').on('click', function() {
     );
 });
 
+//
+// Java property file input handling
+//
+
+var javaPropertyFileInput = $('#java-property-file-input');
+var fileNameToLanguageMapping = {};
+
+javaPropertyFileInput.on('change', function () {
+    console.log('Property files selected');
+
+    // clean up data from last file selection
+    fileNameToLanguageMapping = {};
+
+    const dropdown = $('#java-property-file-language-selection-dropdown');
+    dropdown.empty();
+
+    const fileList = javaPropertyFileInput.prop('files');
+    const mappingContainer = $('#java-property-file-mapper');
+
+    mappingContainer.append($('<table>'));
+
+    for (var i=0; i<fileList.length; i++) {
+        if (fileList[i].name.substr(-11) === '.properties') {
+            mappingContainer.append(
+                $('<tr>' +
+                    '<td><label>' + fileList[i].name + ':</label></td>' +
+                    '<td><input ' +
+                        'type="text" ' +
+                        'name="file:' + fileList[i].name + '" ' +
+                        'class="java-property-form-field" ' +
+                        'onchange="updateLanguageDropDown(event)" ' +
+                        'required /></td>' +
+                  '</tr>'
+                )
+            );
+        }
+    }
+
+    mappingContainer.append($('</table>'));
+
+    if (fileList.length) {
+        mappingContainer.addClass('show');
+    }
+
+    const dropdownContainer = $('#java-property-file-language-selection');
+
+    if (fileList.length > 1) {
+        dropdownContainer.addClass('show');
+    } else {
+        dropdownContainer.removeClass('show');
+    }
+});
+
+function updateLanguageDropDown(event) {
+    console.log('Update base language selection dropdown');
+
+    $('#java-property-file-language-selection-error').hide();
+
+    if (event.target.value) {
+        fileNameToLanguageMapping[event.target.name] = event.target.value;
+    } else if (fileNameToLanguageMapping.hasOwnProperty(event.target.name)) {
+        delete fileNameToLanguageMapping[event.target.name];
+    }
+
+    const dropdown = $('#java-property-file-language-selection-dropdown');
+    dropdown.empty();
+
+    Object.keys(fileNameToLanguageMapping).forEach(function (fileName) {
+        const languageKey = fileNameToLanguageMapping[fileName];
+        dropdown.append($('<option value="' + languageKey + '">' + languageKey + '</option>'));
+    });
+}
+
+$('#java-property-to-excel-submit-button').on('click', function() {
+    function isFormComplete() {
+        var isValid = true;
+        $('.java-property-form-field').each(function() {
+            if ( $(this).val() === '' )
+                isValid = false;
+        });
+        return isValid;
+    }
+
+    if (!isFormComplete()) {
+        $('#java-property-file-language-selection-error').show();
+        return;
+    }
+
+    triggerFileUpload(
+        'java-property-file-form',
+        'java-property-file-error',
+        'translations.xlsx',
+        '/api/transform-java-property-files-to-excel'
+    );
+});
+
+$('#excel-to-property-file-submit-button').on('click', function() {
+    triggerFileUpload(
+        'java-property-excel-form',
+        'java-property-excel-error',
+        'translations.zip',
+        '/api/transform-excel-to-java-property-files'
+    );
+});
+
+//
+// Submit button and file upload handling
+//
+
 $('#excel-to-form-configuration-submit-button').on('click', function() {
     triggerFileUpload(
         'form-configuration-excel-form',
@@ -81,24 +198,6 @@ $('#form-configuration-to-excel-submit-button').on('click', function() {
         'form-configuration-json-error',
         'translations.xlsx',
         '/api/transform-form-configurations-to-excel'
-    );
-});
-
-$('#excel-to-property-file-submit-button').on('click', function() {
-    triggerFileUpload(
-        'java-property-excel-form',
-        'java-property-excel-error',
-        'translations.zip',
-        '/api/transform-excel-to-java-property-files'
-    );
-});
-
-$('#java-property-to-excel-submit-button').on('click', function() {
-    triggerFileUpload(
-        'java-property-file-form',
-        'java-property-file-error',
-        'translations.xlsx',
-        '/api/transform-java-property-files-to-excel'
     );
 });
 
@@ -124,6 +223,7 @@ function triggerFileUpload(formId, errorLabelId, downloadFileName, apiUrl) {
                 // remove files from input
                 var inputElement = $('#' + formId).find('input[type=file]')[0];
                 $(inputElement).val('');
+                // TODO hide mappers
             } else if (request.responseText !== '') {
                 var errorSpan = $('#' + errorLabelId);
                 errorSpan.text(request.responseText);

@@ -1,9 +1,5 @@
 body {}
 
-p {
-    margin-bottom: 1.5em;
-}
-
 tr td:first-of-type {
     padding-right: 1em;
 }
@@ -25,6 +21,10 @@ tr td:first-of-type {
     margin-bottom: 2.5em;
 }
 
+.dcp-section {
+    padding-bottom: 0.5em;
+}
+
 .nav-link {
     cursor: pointer;
 }
@@ -41,12 +41,16 @@ tr td:first-of-type {
     display: none;
 }
 
-#language-selection {
+#language-selection,
+#java-property-file-language-selection,
+#java-property-file-mapper {
     visibility: hidden;
     height: 0;
 }
 
-#language-selection.show {
+#language-selection.show,
+#java-property-file-language-selection.show,
+#java-property-file-mapper.show {
     visibility: visible;
     height: auto;
 }
@@ -56,10 +60,11 @@ tr td:first-of-type {
 #form-configuration-excel-error,
 #form-configuration-json-error,
 #java-property-excel-error,
-#java-property-file-error {
+#java-property-file-error,
+#java-property-file-language-selection-error {
     color: red;
     display: none;
-    padding-top: 0.5em;
+    /* padding-top: 0.5em; */
 }
 
 #excel-to-form-configuration-submit-button {
