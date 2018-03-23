@@ -24,7 +24,7 @@ export function createExcelFromFormConfigurationFiles(targetDirectory: string, b
     throw Error('No form configuration files have been selected.');
   }
 
-  new ExcelComposer().createTranslationFiles(translationObjects, targetDirectory, baseLanguage);
+  new ExcelComposer().createTranslationFiles(targetDirectory, translationObjects, baseLanguage);
 }
 
 /**
@@ -44,7 +44,7 @@ export function createExcelFromJsonTranslationFiles(targetDirectory: string, bas
     throw Error('No JSON translation files have been selected.');
   }
 
-  new ExcelComposer().createTranslationFiles(translationObjects, targetDirectory, baseLanguage);
+  new ExcelComposer().createTranslationFiles(targetDirectory, translationObjects, baseLanguage);
 }
 
 /**
@@ -64,7 +64,7 @@ export function createFormConfigurationsFromExcel(targetDirectory: string, excel
   }
 
   const numberOfCreatedFormConfigurationFiles =
-    new FormConfigurationComposer().createTranslationFiles(translationObjects, targetDirectory);
+    new FormConfigurationComposer().createTranslationFiles(targetDirectory, translationObjects);
 
   console.log(`${numberOfCreatedFormConfigurationFiles} form configuration files created.`);
 }
@@ -86,7 +86,7 @@ export function createJsonTranslationFilesFromExcel(targetDirectory: string, exc
   }
 
   const numberOfCreatedFormConfigurationFiles =
-    new JsonComposer().createTranslationFiles(translationObjects, targetDirectory);
+    new JsonComposer().createTranslationFiles(targetDirectory, translationObjects);
 
   console.log(`${numberOfCreatedFormConfigurationFiles} JSON translation files created.`);
 }

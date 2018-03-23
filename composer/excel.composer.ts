@@ -14,7 +14,9 @@ export class ExcelComposer implements Composer {
   }
 
   public createTranslationFiles(
-    translationObjects: TranslationMetaFormat[], targetDirectory: string, baseLanguage: string): number {
+    targetDirectory: string,
+    translationObjects: TranslationMetaFormat[],
+    baseLanguage: string): number {
 
     const excelHeader = ['key'];
 

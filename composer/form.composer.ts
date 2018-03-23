@@ -28,11 +28,11 @@ export class FormConfigurationComposer implements Composer {
    *    Those uploaded form configurations shall be updated based on the
    *    translations given in the Excel file.
    *
-   * @param {TranslationMetaFormat[]} translationObjects
    * @param {string} targetDirectory
+   * @param {TranslationMetaFormat[]} translationObjects
    * @returns {number}
    */
-  public createTranslationFiles(translationObjects: TranslationMetaFormat[], targetDirectory: string): number {
+  public createTranslationFiles(targetDirectory: string, translationObjects: TranslationMetaFormat[]): number {
     const formConfigurationFiles: { [index: string]: FormConfiguration } = {};
 
     const availableLanguageKeys: string[] = Object.keys(translationObjects[0]).slice(1);

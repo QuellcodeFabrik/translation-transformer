@@ -13,7 +13,7 @@ export class JsonComposer implements Composer {
     return true;
   }
 
-  public createTranslationFiles(translationObjects: TranslationMetaFormat[], targetDirectory: string): number {
+  public createTranslationFiles(targetDirectory: string, translationObjects: TranslationMetaFormat[]): number {
     const availableLanguageKeys: string[] = Object.keys(translationObjects[0]).slice(1);
     console.log('Available languages:', availableLanguageKeys);
 

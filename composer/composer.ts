@@ -1,4 +1,4 @@
-import { TranslationMetaFormat } from '../contracts/app.contract';
+import { FileMapping, TranslationMetaFormat } from '../contracts/app.contract';
 
 export interface Composer {
   /**
@@ -14,11 +14,15 @@ export interface Composer {
    * Transforms the given input data into the output files as defined for the
    * specific composer implementation. Returns the number of files created.
    *
-   * @param {TranslationMetaFormat[]} input
    * @param {string} absoluteTargetLocation
+   * @param {TranslationMetaFormat[]} input
    * @param {string} baseLanguage
+   * @param {FileMapping[]} fileMappings
    * @returns {number} number of created files
    */
   createTranslationFiles(
-    input: TranslationMetaFormat[], absoluteTargetLocation: string, baseLanguage?: string): number;
+    absoluteTargetLocation: string,
+    input: TranslationMetaFormat[],
+    baseLanguage?: string,
+    fileMappings?: FileMapping[]): number;
 }
