@@ -3,9 +3,9 @@ import { FileMapping, TranslationMetaFormat } from '../contracts/app.contract';
 
 /**
  * A file composer that gets translations in a meta format and writes those
- * translations into Java property files.
+ * translations into Java properties files.
  */
-export class JavaPropertyComposer implements Composer {
+export class JavaPropertiesComposer implements Composer {
   public initialize(configuration: any): boolean {
     console.log('Initialize JavaPropertyComposer');
     return true;

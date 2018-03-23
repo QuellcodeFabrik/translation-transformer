@@ -73,7 +73,7 @@ export class JsonParser implements Parser {
     allAvailableKeys.sort();
 
     return allAvailableKeys.map((key: string) => {
-      const translationObject: any = { key };
+      const translationObject: TranslationMetaFormat = { key };
 
       Object.keys(existingJsonFiles).forEach((languageKey: string) => {
         translationObject[languageKey] = existingJsonFiles[languageKey][key] || '';
