@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import { Composer } from './composer';
 import { FileMapping, TranslationMetaFormat } from '../contracts/app.contract';
 
@@ -14,23 +16,27 @@ export class JavaPropertiesComposer implements Composer {
   public createTranslationFiles(
     targetDirectory: string,
     translationObjects: TranslationMetaFormat[],
-    baseLanguage: string,
-    fileMappings: FileMapping[]): number {
+    baseLanguage?: string,
+    fileMappings?: FileMapping[]): number {
 
     const availableLanguageKeys: string[] = Object.keys(translationObjects[0]).slice(1);
     console.log('Available languages:', availableLanguageKeys);
-    console.log('File mappings:', fileMappings);
 
-    // availableLanguageKeys.forEach((languageKey: string) => {
-    //   const result: any = {};
-    //
-    //   translationObjects.forEach((translationObject: TranslationMetaFormat) => {
-    //     result[translationObject.key] = translationObject[languageKey] || '';
-    //   });
-    //
-    //   fs.writeFileSync(path.join(targetDirectory, languageKey + '.json'),
-    //     JSON.stringify(result, null, 2));
-    // });
+    availableLanguageKeys.forEach((languageKey: string) => {
+      let result = '';
+
+      translationObjects.forEach((translationObject: TranslationMetaFormat) => {
+        result += translationObject.key + '=' + translationObject[languageKey] + '\n';
+      });
+
+      const matchingFileMapping = fileMappings ? fileMappings.filter((fileMapping: FileMapping) => {
+        return fileMapping.languageKey === languageKey;
+      })[0] : undefined;
+
+      const fileName = matchingFileMapping ? matchingFileMapping.fileName : languageKey + '.properties';
+
+      fs.writeFileSync(path.join(targetDirectory, fileName), result);
+    });
 
     return availableLanguageKeys.length;
   }

@@ -7,6 +7,7 @@ import { JsonComposer } from './composer/json.composer';
 import { FileMapping, TranslationMetaFormat } from './contracts/app.contract';
 import { ExcelParser } from './parser/excel.parser';
 import { ExcelComposer } from './composer/excel.composer';
+import { JavaPropertiesComposer } from './composer/properties.composer';
 
 /**
  * Parses the JSON translation files in the given directory and creates an
@@ -91,6 +92,31 @@ export function createFormConfigurationsFromExcel(targetDirectory: string, excel
     new FormConfigurationComposer().createTranslationFiles(targetDirectory, translationObjects);
 
   console.log(`${numberOfCreatedFormConfigurationFiles} form configuration files created.`);
+}
+
+/**
+ * Creates Java properties files from the given Excel file.
+ *
+ * @param {string} targetDirectory absolute path to the output directory
+ * @param {string} excelFileName
+ */
+export function createJavaPropertiesFilesFromExcel(targetDirectory: string, excelFileName: string) {
+  const excelFilePath = path.join(targetDirectory, excelFileName);
+
+  const translationObjects: TranslationMetaFormat[] =
+    new ExcelParser().parseFiles([excelFilePath]);
+
+  const fileMappings = ExcelParser.extractFileMappingFromExcel(excelFilePath);
+
+  if (translationObjects.length === 0) {
+    return;
+  }
+
+  const numberOfCreatedFormConfigurationFiles =
+    new JavaPropertiesComposer().createTranslationFiles(
+      targetDirectory, translationObjects, undefined, fileMappings);
+
+  console.log(`${numberOfCreatedFormConfigurationFiles} Java properties files created.`);
 }
 
 /**

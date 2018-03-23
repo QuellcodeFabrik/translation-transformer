@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as shortid from 'shortid';
 import * as app from './app';
 import { Request, Response, NextFunction } from 'express-serve-static-core';
-import {FileMapping} from './contracts/app.contract';
+import { FileMapping } from './contracts/app.contract';
 
 if (!fs.existsSync('temp')) {
   console.log('Creating temp directory.');
@@ -322,46 +322,42 @@ server.post('/api/transform-excel-to-java-property-files', (req: Request & any, 
 
     const targetDirectory = path.join(__dirname, 'temp', uniqueId);
 
-    res.status(404).send('Not yet implemented.');
+    try {
+      app.createJavaPropertiesFilesFromExcel(targetDirectory, 'translations.xlsx');
+    } catch (ex) {
+      return res.status(500).send(ex.message);
+    }
 
-    // TODO implement
+    // The zip library needs to be instantiated:
+    const zipFileLibrary = require('node-zip');
+    const zip = new zipFileLibrary();
 
-    // try {
-    //   app.createJsonTranslationFilesFromExcel(targetDirectory, 'translations.xlsx');
-    // } catch (ex) {
-    //   return res.status(500).send(ex.message);
-    // }
-    //
-    // // The zip library needs to be instantiated:
-    // const zipFileLibrary = require('node-zip');
-    // const zip = new zipFileLibrary();
-    //
-    // // You can add multiple files by performing subsequent calls to zip.file();
-    // // the first argument is how you want the file to be named inside your zip,
-    // // the second is the actual data:
-    // fs.readdirSync(targetDirectory).forEach((fileName: string) => {
-    //   if (fileName.substr(-5) === '.json') {
-    //     zip.file(fileName, fs.readFileSync(path.join(targetDirectory, fileName)));
-    //   }
-    // });
-    //
-    // const data = zip.generate({ base64: false, compression: 'DEFLATE' });
-    //
-    // // it's important to use *binary* encode
-    // fs.writeFileSync(path.join(targetDirectory, 'translations.zip'), data, 'binary');
-    //
-    // res.download(path.join(targetDirectory, 'translations.zip'), 'translations.zip', (downloadError: Error) => {
-    //   if (downloadError) {
-    //     console.error('Could not send translations.zip to client:', downloadError);
-    //   }
-    //
-    //   // delete uniqueId folder and all content
-    //   fs.readdirSync(targetDirectory).forEach((fileName: string) => {
-    //     fs.unlinkSync(path.join(targetDirectory, fileName));
-    //   });
-    //
-    //   fs.rmdirSync(targetDirectory);
-    // });
+    // You can add multiple files by performing subsequent calls to zip.file();
+    // the first argument is how you want the file to be named inside your zip,
+    // the second is the actual data:
+    fs.readdirSync(targetDirectory).forEach((fileName: string) => {
+      if (fileName.substr(-11) === '.properties') {
+        zip.file(fileName, fs.readFileSync(path.join(targetDirectory, fileName)));
+      }
+    });
+
+    const data = zip.generate({ base64: false, compression: 'DEFLATE' });
+
+    // it's important to use *binary* encode
+    fs.writeFileSync(path.join(targetDirectory, 'translations.zip'), data, 'binary');
+
+    res.download(path.join(targetDirectory, 'translations.zip'), 'translations.zip', (downloadError: Error) => {
+      if (downloadError) {
+        console.error('Could not send translations.zip to client:', downloadError);
+      }
+
+      // delete uniqueId folder and all content
+      fs.readdirSync(targetDirectory).forEach((fileName: string) => {
+        fs.unlinkSync(path.join(targetDirectory, fileName));
+      });
+
+      fs.rmdirSync(targetDirectory);
+    });
   });
 });
 
