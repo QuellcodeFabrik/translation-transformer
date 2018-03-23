@@ -29,7 +29,7 @@ export class ExcelComposer implements Composer {
     targetDirectory: string,
     translationObjects: TranslationMetaFormat[],
     baseLanguage: string,
-    fileMappings: FileMapping[]): number {
+    fileMappings?: FileMapping[]): number {
 
     const sheetNamesArray = [this.translationsWorkSheetName];
     const sheetsObject: { [index: string]: ExcelWorker.Sheet } = {
