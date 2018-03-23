@@ -16,7 +16,6 @@ export interface TranslationMetaFormat {
  * Excel file.
  */
 export interface FileMapping {
-  translationKey: string;
   languageKey: string;
   fileName: string;
 }

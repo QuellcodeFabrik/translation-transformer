@@ -1,14 +1,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Parser } from './parser';
-import { TranslationMetaFormat } from '../contracts/app.contract';
+import { FileMapping, TranslationMetaFormat } from '../contracts/app.contract';
 
 /**
  * A file parser that gets translations from Java properties files and puts them
  * into a meta format.
  */
 export class JavaPropertiesParser implements Parser {
-  public parseFilesFromDirectory(absolutePath: string): TranslationMetaFormat[] {
+  public parseFilesFromDirectory(absolutePath: string, fileMappings: FileMapping[]): TranslationMetaFormat[] {
     const propertyFileList: string[] = [];
 
     if (fs.existsSync(absolutePath)) {
@@ -26,34 +26,50 @@ export class JavaPropertiesParser implements Parser {
       return [];
     } else {
       console.log(`Found ${propertyFileList.length} Java property files.`);
-      return this.parseFiles(propertyFileList);
+      return this.parseFiles(propertyFileList, fileMappings);
     }
     }
 
-  public parseFiles(absoluteFilePaths: string[]): TranslationMetaFormat[] {
+  public parseFiles(absoluteFilePaths: string[], fileMappings: FileMapping[]): TranslationMetaFormat[] {
     const existingPropertiesFiles: any = {};
     const allAvailableKeys: string[] = [];
+
+    const fileMapper: {[index: string]: any} = fileMappings.reduce((previousValue, currentValue) => {
+      return Object.assign({}, previousValue, {
+        [currentValue.fileName]: currentValue.languageKey
+      });
+    }, {});
 
     absoluteFilePaths.forEach((filePath: string) => {
       if (fs.existsSync(filePath)) {
         const fileName = path.basename(filePath);
 
-        const keyValuePairs: {key: string, value: string}[] = fs.readFileSync(filePath, 'utf-8')
+        const keyValuePairs: {[index: string]: string} = fs.readFileSync(filePath, 'utf-8')
           .split('\n')
-          .filter(Boolean)
+          .filter((line: string) => line && line.length > 0)
           .map((line: string) => {
+            line = line.replace('\r', '');
             return {
               key: line.split('=')[0],
               value: line.split('=')[1]
             };
-          });
+          })
+          .reduce((previousValue, currentValue) => {
+            if (currentValue.key && currentValue.key.length > 0) {
+              return Object.assign({}, previousValue, {
+                [currentValue.key]: currentValue.value
+              });
+            } else {
+              return previousValue;
+            }
+          }, {});
 
         // parse file content as string array
         existingPropertiesFiles[fileName] = keyValuePairs;
 
-        keyValuePairs.forEach((keyValuePair: {key: string, value: string}) => {
-            if (allAvailableKeys.indexOf(keyValuePair.key) === -1) {
-              allAvailableKeys.push(keyValuePair.key);
+        Object.keys(keyValuePairs).forEach((key: string) => {
+            if (allAvailableKeys.indexOf(key) === -1) {
+              allAvailableKeys.push(key);
             }
         });
       } else {
@@ -71,7 +87,8 @@ export class JavaPropertiesParser implements Parser {
       const translationObject: TranslationMetaFormat = { key };
 
       Object.keys(existingPropertiesFiles).forEach((fileName: string) => {
-        translationObject[fileName] = existingPropertiesFiles[fileName][key] || '';
+        const languageKey = fileMapper[fileName];
+        translationObject[languageKey] = existingPropertiesFiles[fileName][key] || '';
       });
 
       return translationObject;

@@ -116,6 +116,10 @@ javaPropertyFileInput.on('change', function () {
 
     if (fileList.length) {
         mappingContainer.addClass('show');
+    } else {
+        fileNameToLanguageMapping = {};
+        mappingContainer.empty();
+        mappingContainer.removeClass('show');
     }
 
     const dropdownContainer = $('#java-property-file-language-selection');
@@ -223,7 +227,16 @@ function triggerFileUpload(formId, errorLabelId, downloadFileName, apiUrl) {
                 // remove files from input
                 var inputElement = $('#' + formId).find('input[type=file]')[0];
                 $(inputElement).val('');
-                // TODO hide mappers
+
+                const mappingContainer = $('#java-property-file-mapper');
+                mappingContainer.empty();
+                mappingContainer.removeClass('show');
+
+                const dropdown = $('#java-property-file-language-selection-dropdown');
+                dropdown.empty();
+
+                const dropdownContainer = $('#java-property-file-language-selection');
+                dropdownContainer.removeClass('show');
             } else if (request.responseText !== '') {
                 var errorSpan = $('#' + errorLabelId);
                 errorSpan.text(request.responseText);

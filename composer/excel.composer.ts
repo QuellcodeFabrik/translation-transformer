@@ -48,7 +48,7 @@ export class ExcelComposer implements Composer {
   }
 
   private static createFileMappingSheet(fileMappings: FileMapping[]): ExcelWorker.Sheet {
-    const excelHeader = ['translationKey', 'languageKey', 'fileName'];
+    const excelHeader = ['languageKey', 'fileName'];
 
     return ExcelWorker.utils.json_to_sheet(fileMappings, {
       header: excelHeader
@@ -56,7 +56,8 @@ export class ExcelComposer implements Composer {
   }
 
   private static createTranslationSheet(
-    translationObjects: TranslationMetaFormat[], baseLanguage: string): ExcelWorker.Sheet {
+    translationObjects: TranslationMetaFormat[],
+    baseLanguage: string): ExcelWorker.Sheet {
 
     const excelHeader = ['key'];
 

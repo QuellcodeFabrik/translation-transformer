@@ -1,9 +1,10 @@
 import * as path from 'path';
+import { JavaPropertiesParser } from './parser/properties.parser';
 import { JsonParser } from './parser/json.parser';
 import { FormConfigurationParser } from './parser/form.parser';
 import { FormConfigurationComposer } from './composer/form.composer';
 import { JsonComposer } from './composer/json.composer';
-import { TranslationMetaFormat } from './contracts/app.contract';
+import { FileMapping, TranslationMetaFormat } from './contracts/app.contract';
 import { ExcelParser } from './parser/excel.parser';
 import { ExcelComposer } from './composer/excel.composer';
 
@@ -25,6 +26,29 @@ export function createExcelFromFormConfigurationFiles(targetDirectory: string, b
   }
 
   new ExcelComposer().createTranslationFiles(targetDirectory, translationObjects, baseLanguage);
+}
+
+/**
+ * Parses the Java Properties files in the given directory and creates an
+ * Excel workbook out of it.
+ *
+ * @param {string} targetDirectory
+ * @param {string} baseLanguage
+ * @param {FileMapping[]} fileMappings
+ */
+export function createExcelFromJavaPropertiesFiles(
+  targetDirectory: string, baseLanguage: string, fileMappings: FileMapping[]) {
+
+  const javaPropertyParser = new JavaPropertiesParser();
+
+  const translationObjects: TranslationMetaFormat[] =
+    javaPropertyParser.parseFilesFromDirectory(targetDirectory, fileMappings);
+
+  if (!translationObjects || translationObjects.length === 0) {
+    throw Error('No Java properties files have been selected.');
+  }
+
+  new ExcelComposer().createTranslationFiles(targetDirectory, translationObjects, baseLanguage, fileMappings);
 }
 
 /**

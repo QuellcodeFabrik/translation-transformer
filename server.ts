@@ -5,6 +5,7 @@ import * as path from 'path';
 import * as shortid from 'shortid';
 import * as app from './app';
 import { Request, Response, NextFunction } from 'express-serve-static-core';
+import {FileMapping} from './contracts/app.contract';
 
 if (!fs.existsSync('temp')) {
   console.log('Creating temp directory.');
@@ -323,6 +324,8 @@ server.post('/api/transform-excel-to-java-property-files', (req: Request & any, 
 
     res.status(404).send('Not yet implemented.');
 
+    // TODO implement
+
     // try {
     //   app.createJsonTranslationFilesFromExcel(targetDirectory, 'translations.xlsx');
     // } catch (ex) {
@@ -387,36 +390,35 @@ server.post('/api/transform-java-property-files-to-excel', (req: Request & any, 
     const baseLanguage = req.body['base-language'];
     console.log('Base language:', baseLanguage);
 
-    const fileNameLanguageMapping = Object.keys(req.body).filter((formField: string) => {
+    const fileMappings: FileMapping[] = Object.keys(req.body).filter((formField: string) => {
       return formField.indexOf('file:') === 0;
     }).map((formField: string) => {
-      return { fileName: formField.substr(5), languagKey: req.body[formField] };
+      return { fileName: formField.substr(5), languageKey: req.body[formField] };
     });
 
-    console.log('File name language mappings:', fileNameLanguageMapping);
+    console.log('File name language mappings:');
+    console.log(fileMappings);
 
     const targetDirectory = path.join(__dirname, 'temp', uniqueId);
 
-    res.status(404).send('Not yet implemented.');
+    try {
+      app.createExcelFromJavaPropertiesFiles(targetDirectory, baseLanguage, fileMappings);
+    } catch (ex) {
+      return res.status(500).send(ex.message);
+    }
 
-    // try {
-    //   app.createExcelFromJsonTranslationFiles(targetDirectory, baseLanguage);
-    // } catch (ex) {
-    //   return res.status(500).send(ex.message);
-    // }
-    //
-    // res.download(path.join(targetDirectory, 'translations.xlsx'), 'translations.xlsx', (downloadError: Error) => {
-    //   if (downloadError) {
-    //     console.error('Could not send translations.xlsx to client:', downloadError);
-    //   }
-    //
-    //   // delete uniqueId folder and all content
-    //   fs.readdirSync(targetDirectory).forEach((fileName: string) => {
-    //     fs.unlinkSync(path.join(targetDirectory, fileName));
-    //   });
-    //
-    //   fs.rmdirSync(targetDirectory);
-    // });
+    res.download(path.join(targetDirectory, 'translations.xlsx'), 'translations.xlsx', (downloadError: Error) => {
+      if (downloadError) {
+        console.error('Could not send translations.xlsx to client:', downloadError);
+      }
+
+      // delete uniqueId folder and all content
+      fs.readdirSync(targetDirectory).forEach((fileName: string) => {
+        fs.unlinkSync(path.join(targetDirectory, fileName));
+      });
+
+      fs.rmdirSync(targetDirectory);
+    });
   });
 });
 
