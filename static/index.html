@@ -183,14 +183,34 @@
                      data-parent="#configuration-files">
                     <div class="card-body">
                         <p>
-                            Please use names for the form configuration files that reflect the
-                            language each file represents e.g. en.json or de.json. If you do not
-                            follow this convention, it will be harder for the translators to
-                            associate their translations with the right language.
+                            You can upload up to 20 form configuration files each of them
+                            representing one language that needs to be translated. If you upload
+                            more than one form configuration, you should also specify the base
+                            language in the form.
                         </p>
                         <form id="form-configuration-json-form" enctype="multipart/form-data">
+                            <p>
+                                Please give a language key for every file that you want to
+                                be translated. Those keys are only used for the translation
+                                agency to identify the language.
+                            </p>
+                            <div id="form-configuration-file-mapper" class="dcp-section">
+                                <!-- here the file names will be mapped to language keys -->
+                            </div>
+                            <div id="form-configuration-language-selection" class="dcp-section">
+                                <label for="java-property-file-language-selection-dropdown">
+                                    Select your base language:
+                                </label>
+                                <select id="form-configuration-language-selection-dropdown"
+                                        name="base-language">
+                                </select>
+                            </div>
+                            <div id="form-configuration-language-selection-error" class="dcp-section">
+                                Please give a language key for every file name.
+                            </div>
                             <input type="file"
                                    name="form-configurations"
+                                   id="form-configuration-file-input"
                                    accept=".json"
                                    multiple />
                             <input type="button"
@@ -258,7 +278,7 @@
                      data-parent="#angular-files">
                     <div class="card-body">
                         <p>
-                            You can upload up to 20 Java property files each of them representing
+                            You can upload up to 20 Java properties files each of them representing
                             one language that needs to be translated. If you upload more than one
                             property file, you should also specify the base language in the form.
                         </p>

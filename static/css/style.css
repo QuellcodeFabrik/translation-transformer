@@ -42,6 +42,8 @@ tr td:first-of-type {
 }
 
 #language-selection,
+#form-configuration-language-selection,
+#form-configuration-mapper,
 #java-property-file-language-selection,
 #java-property-file-mapper {
     visibility: hidden;
@@ -49,6 +51,8 @@ tr td:first-of-type {
 }
 
 #language-selection.show,
+#form-configuration-language-selection.show,
+#form-configuration-mapper.show,
 #java-property-file-language-selection.show,
 #java-property-file-mapper.show {
     visibility: visible;
@@ -59,6 +63,7 @@ tr td:first-of-type {
 #angular-translation-json-error,
 #form-configuration-excel-error,
 #form-configuration-json-error,
+#form-configuration-language-selection-error,
 #java-property-excel-error,
 #java-property-file-error,
 #java-property-file-language-selection-error {
