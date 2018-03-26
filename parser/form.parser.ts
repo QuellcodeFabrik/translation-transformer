@@ -2,7 +2,7 @@ import * as helper from '../helper/helper';
 import * as path from 'path';
 import * as fs from 'fs';
 import { Parser } from './parser';
-import { TranslationMetaFormat } from '../contracts/app.contract';
+import { FileMapping, TranslationMetaFormat } from '../contracts/app.contract';
 import { FormElement, TitleMap } from '../contracts/form-configuration.contract';
 
 /**
@@ -10,7 +10,7 @@ import { FormElement, TitleMap } from '../contracts/form-configuration.contract'
  * them into a meta format.
  */
 export class FormConfigurationParser implements Parser {
-  public parseFilesFromDirectory(absolutePath: string): TranslationMetaFormat[] {
+  public parseFilesFromDirectory(absolutePath: string, fileMappings: FileMapping[]): TranslationMetaFormat[] {
     const formConfigurationsFileList: string[] = [];
 
     if (fs.existsSync(absolutePath)) {
@@ -28,12 +28,11 @@ export class FormConfigurationParser implements Parser {
       return [];
     } else {
       console.log(`Found ${formConfigurationsFileList.length} form configuration files.`);
-      return this.parseFiles(formConfigurationsFileList);
+      return this.parseFiles(formConfigurationsFileList, fileMappings);
     }
   }
 
-  public parseFiles(absoluteFilePaths: string[]): TranslationMetaFormat[] {
-
+  public parseFiles(absoluteFilePaths: string[], fileMappings: FileMapping[]): TranslationMetaFormat[] {
     // Fields to parse from form configuration
     //
     // formElementConfigurations -> {} :: titleMap -> {} :: name
@@ -48,9 +47,15 @@ export class FormConfigurationParser implements Parser {
     const existingFormConfigurations: any = {};
     const existingTranslationKeys: any = {};
 
+    const fileMapper: {[index: string]: any} = fileMappings.reduce((previousValue, currentValue) => {
+      return Object.assign({}, previousValue, {
+        [currentValue.fileName]: currentValue.languageKey
+      });
+    }, {});
+
     absoluteFilePaths.forEach((filePath: string) => {
       if (fs.existsSync(filePath)) {
-        const fileName = path.basename(filePath).replace('.json', '');
+        const fileName = path.basename(filePath); // .replace('.json', '');
 
         // parse file content as JSON
         existingFormConfigurations[fileName] = JSON.parse(fs.readFileSync(filePath, {
@@ -79,7 +84,7 @@ export class FormConfigurationParser implements Parser {
             translationKey = baseTranslationKey + '.title';
 
             FormConfigurationParser.addTranslationKey(
-              existingTranslationKeys, translationKey, fileName, element.title);
+              existingTranslationKeys, translationKey, fileMapper[fileName], element.title);
           }
 
           if (element.titleMap) {
@@ -87,7 +92,7 @@ export class FormConfigurationParser implements Parser {
               translationKey = baseTranslationKey + '.titleMap.' + titleMap.value;
 
               FormConfigurationParser.addTranslationKey(
-                existingTranslationKeys, translationKey, fileName, titleMap.name);
+                existingTranslationKeys, translationKey, fileMapper[fileName], titleMap.name);
             });
           }
 
@@ -96,7 +101,7 @@ export class FormConfigurationParser implements Parser {
               translationKey = baseTranslationKey + '.validationMessage.' + messageId;
 
               FormConfigurationParser.addTranslationKey(
-                existingTranslationKeys, translationKey, fileName, element.validationMessage![messageId]);
+                existingTranslationKeys, translationKey, fileMapper[fileName], element.validationMessage![messageId]);
             });
           }
         });

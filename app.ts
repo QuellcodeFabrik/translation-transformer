@@ -15,18 +15,20 @@ import { JavaPropertiesComposer } from './composer/properties.composer';
  *
  * @param {string} targetDirectory
  * @param {string} baseLanguage
+ * @param {string} fileMappings
  */
-export function createExcelFromFormConfigurationFiles(targetDirectory: string, baseLanguage: string) {
+export function createExcelFromFormConfigurationFiles(
+  targetDirectory: string, baseLanguage: string, fileMappings: FileMapping[]) {
   const formConfigurationParser = new FormConfigurationParser();
 
   const translationObjects: TranslationMetaFormat[] =
-    formConfigurationParser.parseFilesFromDirectory(targetDirectory);
+    formConfigurationParser.parseFilesFromDirectory(targetDirectory, fileMappings);
 
   if (!translationObjects || translationObjects.length === 0) {
     throw Error('No form configuration files have been selected.');
   }
 
-  new ExcelComposer().createTranslationFiles(targetDirectory, translationObjects, baseLanguage);
+  new ExcelComposer().createTranslationFiles(targetDirectory, translationObjects, baseLanguage, fileMappings);
 }
 
 /**

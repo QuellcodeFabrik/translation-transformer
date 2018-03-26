@@ -276,10 +276,19 @@ server.post('/api/transform-form-configurations-to-excel', (req: Request & any, 
     const baseLanguage = req.body['base-language'];
     console.log('Base language:', baseLanguage);
 
+    const fileMappings: FileMapping[] = Object.keys(req.body).filter((formField: string) => {
+      return formField.indexOf('file:') === 0;
+    }).map((formField: string) => {
+      return { fileName: formField.substr(5), languageKey: req.body[formField] };
+    });
+
+    console.log('File name language mappings:');
+    console.log(fileMappings);
+
     const targetDirectory = path.join(__dirname, 'temp', uniqueId);
 
     try {
-      app.createExcelFromFormConfigurationFiles(targetDirectory, baseLanguage);
+      app.createExcelFromFormConfigurationFiles(targetDirectory, baseLanguage, fileMappings);
     } catch (ex) {
       return res.status(500).send(ex.message);
     }
