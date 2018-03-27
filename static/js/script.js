@@ -3,11 +3,11 @@
 //
 var configuration = {
   java: {
-      fileInputFieldId: '#java-property-file-input',
-      languageMappingContainerId: '#java-property-file-mapper',
-      baseLanguageDropDownId: '#java-property-file-language-selection-dropdown',
-      baseLanguageDropDownContainerId: '#java-property-file-language-selection',
-      languageSelectionErrorLabel: '#java-property-file-language-selection-error',
+      fileInputFieldId: '#java-properties-file-input',
+      languageMappingContainerId: '#java-properties-file-mapper',
+      baseLanguageDropDownId: '#java-properties-file-language-selection-dropdown',
+      baseLanguageDropDownContainerId: '#java-properties-file-language-selection',
+      languageSelectionErrorLabel: '#java-properties-file-language-selection-error',
       fileNameToLanguageMapping: {}
   },
   form: {
@@ -17,6 +17,11 @@ var configuration = {
     baseLanguageDropDownContainerId: '#form-configuration-language-selection',
     languageSelectionErrorLabel: '#form-configuration-language-selection-error',
     fileNameToLanguageMapping: {}
+  },
+  json: {
+      fileInputFieldId: '#json-file-input',
+      baseLanguageDropDownId: '#json-file-language-selection-dropdown',
+      baseLanguageDropDownContainerId: '#json-file-language-selection'
   }
 };
 
@@ -54,12 +59,12 @@ navLinkElements.click(function (element) {
 // JSON translation file input
 //
 
-var jsonFileInput = $('#json-file-input');
+$(configuration.json.fileInputFieldId).on('change', function () {
+    console.log('JSON language file input changed');
+    const fileList = $(this).prop('files');
 
-jsonFileInput.on('change', function () {
-    const fileList = jsonFileInput.prop('files');
-    const dropdownContainer = $('#language-selection');
-    const dropdown = $('#language-selection-dropdown');
+    const dropdownContainer = $(configuration.json.baseLanguageDropDownContainerId);
+    const dropdown = $(configuration.json.baseLanguageDropDownId);
     dropdown.empty();
 
     var languageKeyCount = 0;
@@ -78,6 +83,16 @@ jsonFileInput.on('change', function () {
     }
 });
 
+$('#json-to-excel-submit-button').on('click', function() {
+    triggerFileUpload(
+        'angular-translation-json-form',
+        'angular-translation-json-error',
+        'translations.xlsx',
+        '/api/transform-json-files-to-excel',
+        'json'
+    );
+});
+
 $('#excel-to-json-submit-button').on('click', function() {
     triggerFileUpload(
         'angular-translation-excel-form',
@@ -87,17 +102,8 @@ $('#excel-to-json-submit-button').on('click', function() {
     );
 });
 
-$('#json-to-excel-submit-button').on('click', function() {
-    triggerFileUpload(
-        'angular-translation-json-form',
-        'angular-translation-json-error',
-        'translations.xlsx',
-        '/api/transform-json-files-to-excel'
-    );
-});
-
 //
-// Java property file input handling
+// Java properties file input handling
 //
 
 $(configuration.java.fileInputFieldId).on('change', function () {
@@ -105,7 +111,7 @@ $(configuration.java.fileInputFieldId).on('change', function () {
     handleFileInputChange('java', $(this).prop('files'), '.properties');
 });
 
-$('#java-property-to-excel-submit-button').on('click', function() {
+$('#java-properties-to-excel-submit-button').on('click', function() {
     function isFormComplete() {
         var isValid = true;
         $('.java-file-form-field').each(function() {
@@ -121,20 +127,20 @@ $('#java-property-to-excel-submit-button').on('click', function() {
     }
 
     triggerFileUpload(
-        'java-property-file-form',
-        'java-property-file-error',
+        'java-properties-file-form',
+        'java-properties-file-error',
         'translations.xlsx',
-        '/api/transform-java-property-files-to-excel',
+        '/api/transform-java-properties-files-to-excel',
         'java'
     );
 });
 
-$('#excel-to-property-file-submit-button').on('click', function() {
+$('#excel-to-properties-file-submit-button').on('click', function() {
     triggerFileUpload(
-        'java-property-excel-form',
-        'java-property-excel-error',
+        'java-properties-excel-form',
+        'java-properties-excel-error',
         'translations.zip',
-        '/api/transform-excel-to-java-property-files'
+        '/api/transform-excel-to-java-properties-files'
     );
 });
 
@@ -230,14 +236,10 @@ function triggerFileUpload(formId, errorLabelId, downloadFileName, apiUrl, fileT
  * @param fileType as defined in the configuration section
  */
 function cleanUpUserInput(formId, fileType) {
-    // handleFileInputChange
-    var inputElement = $('#' + formId).find('input[type=file]')[0];
-    $(inputElement).val('');
-
-    // clean all input elements
-    // $('#' + formId).find('input').each(function() {
-    //     $(this).val('');
-    // });
+    // clean all file input elements
+    $('#' + formId).find('input[type=file]').each(function() {
+        $(this).val('');
+    });
 
     if (!fileType || !configuration[fileType]) {
         console.warn(`File type ${fileType} does not exist.`);

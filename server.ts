@@ -308,9 +308,9 @@ server.post('/api/transform-form-configurations-to-excel', (req: Request & any, 
   });
 });
 
-// REST endpoint to transform an Excel file to different Java property files
+// REST endpoint to transform an Excel file to different Java properties files
 // each of them containing translations for one language key.
-server.post('/api/transform-excel-to-java-property-files', (req: Request & any, res: Response) => {
+server.post('/api/transform-excel-to-java-properties-files', (req: Request & any, res: Response) => {
   const upload = multer({
     storage,
     fileFilter: (request, file, callback: any) => {
@@ -370,9 +370,9 @@ server.post('/api/transform-excel-to-java-property-files', (req: Request & any, 
   });
 });
 
-// REST endpoint to transform multiple Java property files into one Excel file
+// REST endpoint to transform multiple Java properties files into one Excel file
 // containing all keys and available translations
-server.post('/api/transform-java-property-files-to-excel', (req: Request & any, res: Response) => {
+server.post('/api/transform-java-properties-files-to-excel', (req: Request & any, res: Response) => {
   const upload = multer({
     storage,
     fileFilter: (request, file, callback: any) => {
@@ -380,7 +380,7 @@ server.post('/api/transform-java-property-files-to-excel', (req: Request & any, 
         return callback(Error('Only .properties files are allowed.'), null);
       }
       callback(null, true);
-    }}).array('java-property-files', 20);
+    }}).array('java-properties-files', 20);
 
   const uniqueId = shortid.generate();
   req.userToken = uniqueId;

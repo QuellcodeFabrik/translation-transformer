@@ -1,5 +1,3 @@
-body {}
-
 tr td:first-of-type {
     padding-right: 1em;
 }
@@ -41,20 +39,20 @@ tr td:first-of-type {
     display: none;
 }
 
-#language-selection,
+#json-file-language-selection,
 #form-configuration-language-selection,
 #form-configuration-mapper,
-#java-property-file-language-selection,
-#java-property-file-mapper {
+#java-properties-file-language-selection,
+#java-properties-file-mapper {
     visibility: hidden;
     height: 0;
 }
 
-#language-selection.show,
+#json-file-language-selection.show,
 #form-configuration-language-selection.show,
 #form-configuration-mapper.show,
-#java-property-file-language-selection.show,
-#java-property-file-mapper.show {
+#java-properties-file-language-selection.show,
+#java-properties-file-mapper.show {
     visibility: visible;
     height: auto;
 }
@@ -64,12 +62,11 @@ tr td:first-of-type {
 #form-configuration-excel-error,
 #form-configuration-json-error,
 #form-configuration-language-selection-error,
-#java-property-excel-error,
-#java-property-file-error,
-#java-property-file-language-selection-error {
+#java-properties-excel-error,
+#java-properties-file-error,
+#java-properties-file-language-selection-error {
     color: red;
     display: none;
-    /* padding-top: 0.5em; */
 }
 
 #excel-to-form-configuration-submit-button {

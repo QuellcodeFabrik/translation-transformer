@@ -2,7 +2,7 @@ import * as helper from '../helper/helper';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Composer } from './composer';
-import { TranslationMetaFormat } from '../contracts/app.contract';
+import { FileMapping, TranslationMetaFormat } from '../contracts/app.contract';
 import { FormConfiguration, FormElement, TitleMap } from '../contracts/form-configuration.contract';
 
 /**
@@ -30,9 +30,16 @@ export class FormConfigurationComposer implements Composer {
    *
    * @param {string} targetDirectory
    * @param {TranslationMetaFormat[]} translationObjects
+   * @param {string} baseLanguage
+   * @param {FileMapping[]} fileMappings
    * @returns {number}
    */
-  public createTranslationFiles(targetDirectory: string, translationObjects: TranslationMetaFormat[]): number {
+  public createTranslationFiles(
+    targetDirectory: string,
+    translationObjects: TranslationMetaFormat[],
+    baseLanguage?: string,
+    fileMappings?: FileMapping[]): number {
+
     const formConfigurationFiles: { [index: string]: FormConfiguration } = {};
 
     const availableLanguageKeys: string[] = Object.keys(translationObjects[0]).slice(1);
@@ -41,10 +48,9 @@ export class FormConfigurationComposer implements Composer {
     fs.readdirSync(targetDirectory).forEach((fileName: string) => {
       if (fileName.substr(-5) === '.json') {
         const filePath = path.join(targetDirectory, fileName);
-        const languageKey = fileName.replace('.json', '');
 
         // parse file content as JSON
-        formConfigurationFiles[languageKey] = JSON.parse(fs.readFileSync(filePath, {
+        formConfigurationFiles[fileName] = JSON.parse(fs.readFileSync(filePath, {
           encoding: 'utf8'
         }));
       }
@@ -56,17 +62,27 @@ export class FormConfigurationComposer implements Composer {
     if (numberOfFormConfigurations === 1) {
       console.log('Using provided form configuration file as blueprint.');
     } else if (numberOfFormConfigurations > 1) {
-      console.log('Modifying provided from configuration files.');
+      console.log('Modifying provided form configuration files.');
     } else {
       throw Error('No form configuration file provided.');
     }
 
+    let fileMapper: {[index: string]: any} = {};
+    if (fileMappings && fileMappings.length) {
+      fileMapper = fileMappings.reduce((previousValue, currentValue) => {
+        return Object.assign({}, previousValue, {
+          [currentValue.languageKey]: currentValue.fileName
+        });
+      }, {});
+    }
+
     availableLanguageKeys.forEach((languageKey: string) => {
+      const mappedFileName = fileMapper ? fileMapper[languageKey] : languageKey;
       let result: FormConfiguration | undefined;
 
       if (numberOfFormConfigurations > 1) {
-        if (formConfigurationFiles.hasOwnProperty(languageKey)) {
-          result = formConfigurationFiles[languageKey];
+        if (formConfigurationFiles.hasOwnProperty(mappedFileName)) {
+          result = formConfigurationFiles[mappedFileName];
         } else {
           console.warn(`No form configuration file for '${languageKey}' provided.`);
         }
@@ -81,7 +97,7 @@ export class FormConfigurationComposer implements Composer {
           );
         });
 
-        fs.writeFileSync(path.join(targetDirectory, languageKey + '.json'),
+        fs.writeFileSync(path.join(targetDirectory, mappedFileName),
           JSON.stringify(result, null, 2));
 
         numberOfCreatedFormConfigurations++;

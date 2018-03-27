@@ -90,8 +90,11 @@ export function createFormConfigurationsFromExcel(targetDirectory: string, excel
     return;
   }
 
+  const fileMappings = ExcelParser.extractFileMappingFromExcel(excelFilePath);
+
   const numberOfCreatedFormConfigurationFiles =
-    new FormConfigurationComposer().createTranslationFiles(targetDirectory, translationObjects);
+    new FormConfigurationComposer().createTranslationFiles(
+      targetDirectory, translationObjects, undefined, fileMappings);
 
   console.log(`${numberOfCreatedFormConfigurationFiles} form configuration files created.`);
 }
