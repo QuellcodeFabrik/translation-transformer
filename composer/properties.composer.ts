@@ -26,7 +26,7 @@ export class JavaPropertiesComposer implements Composer {
       let result = '';
 
       translationObjects.forEach((translationObject: TranslationMetaFormat) => {
-        result += translationObject.key + '=' + translationObject[languageKey] + '\n';
+        result += translationObject.key.trim() + ' = ' + translationObject[languageKey].trim() + '\n';
       });
 
       const matchingFileMapping = fileMappings ? fileMappings.filter((fileMapping: FileMapping) => {
