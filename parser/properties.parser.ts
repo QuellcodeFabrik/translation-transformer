@@ -50,8 +50,8 @@ export class JavaPropertiesParser implements Parser {
           .map((line: string) => {
             line = line.replace('\r', '');
             return {
-              key: line.split('=')[0],
-              value: line.split('=')[1]
+              key: line.split('=')[0].trim(),
+              value: line.split('=')[1].trim()
             };
           })
           .reduce((previousValue, currentValue) => {
