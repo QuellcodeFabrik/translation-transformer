@@ -3,6 +3,8 @@ import * as path from 'path';
 import { Composer } from './composer';
 import { TranslationMetaFormat } from '../contracts/app.contract';
 
+const emptyTranslationPlaceholder = '<hide>';
+
 /**
  * A file composer that gets translations in a meta format and writes those
  * translations into JSON translation files.
@@ -21,7 +23,11 @@ export class JsonComposer implements Composer {
       const result: any = {};
 
       translationObjects.forEach((translationObject: TranslationMetaFormat) => {
-        result[translationObject.key] = translationObject[languageKey] || '';
+        // replace translation placeholder with empty string
+        const translation = translationObject[languageKey] === emptyTranslationPlaceholder ?
+          '' : translationObject[languageKey];
+
+        result[translationObject.key] = translation || '';
       });
 
       fs.writeFileSync(path.join(targetDirectory, languageKey + '.json'),

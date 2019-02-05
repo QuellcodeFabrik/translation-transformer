@@ -3,6 +3,8 @@ import * as path from 'path';
 import { Parser } from './parser';
 import { TranslationMetaFormat } from '../contracts/app.contract';
 
+const emptyTranslationPlaceholder = '<hide>';
+
 /**
  * A file parser that gets translations from JSON translation files and puts
  * them into a meta format.
@@ -76,7 +78,7 @@ export class JsonParser implements Parser {
       const translationObject: TranslationMetaFormat = { key };
 
       Object.keys(existingJsonFiles).forEach((languageKey: string) => {
-        translationObject[languageKey] = existingJsonFiles[languageKey][key] || '';
+        translationObject[languageKey] = existingJsonFiles[languageKey][key] || emptyTranslationPlaceholder;
       });
 
       return translationObject;
