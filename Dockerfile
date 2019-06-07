@@ -1,4 +1,4 @@
-FROM node:8-alpine
+FROM node:10-alpine
 MAINTAINER Sascha Gros <sascha.gros@quellcodefabrik.com>
 
 WORKDIR /usr/app
